@@ -32,7 +32,7 @@
   gulp.task('html', ['css'], function () {
     setTimeout(function(){
       return gulp.src('./src/*.html')
-        .pipe(inline())
+        .pipe(inline({compress:false}))
         .pipe(htmlmin({collapseWhitespace: true}))
         .pipe(gulp.dest(__dirname));
     }, 100);
