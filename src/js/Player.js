@@ -12,12 +12,19 @@
     this.health = this.maxHealth;
     this.view = "👦🤵🏻";
     this.$field = null;
-    console.log(this.stage);
+    this.actions = [{
+      actionId: 'move',
+      view: '🏃'
+    }];
     this.move(this.position.x, this.position.y);
   };
 
   Player.prototype = {
     move: function(x, y){
+      if (this.stage.getPlayerInField(this.stage.getFieldByCoordinate(x, y))) {
+        console.warn('cant move to occupied field');
+        return false;
+      }
       this.position.x = x;
       this.position.y = y;
       this.stage.dirty = true;
@@ -36,6 +43,17 @@
       div.innerText += this.view;
       div.dataset.player = this;
       this.$field = div;
+    },
+    renderActions: function () {
+      var b = document.createElement('b');
+      this.actions.forEach(function(action) {
+        var $n = document.createElement('li');
+        $n.innerText = action.view;
+        $n.dataset.actionId = action.actionId;
+        b.appendChild($n);
+      }, this);
+
+      return b.innerHTML;
     }
   };
 

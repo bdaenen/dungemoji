@@ -4,9 +4,18 @@
   var Stage = function(){
     this.renderTargets = [];
     this.dirty = false;
+    this._state = this.GAME_STATE_SELECT_CHARACTER;
+    this.turn = this.TURN_PLAYER;
+    this.currentSelection = null;
   };
 
   Stage.prototype = {
+    GAME_STATE_SELECT_CHARACTER: 1,
+    GAME_STATE_SELECT_ACTION: 2,
+    GAME_STATE_SELECT_POSITION: 3,
+    GAME_STATE_SELECT_TARGET: 4,
+    TURN_PLAYER: 1,
+    TURN_ENEMY: 2,
     init: function(){},
     addPlayer: function(player){
       this.renderTargets.push(player);
@@ -32,6 +41,12 @@
       }, this);
       this.dirty = false;
     },
+    /**
+     * @param x
+     * @param y
+     * @param [type=FIELD_TYPE_STAGE]
+     * @returns {*}
+     */
     getFieldByCoordinate: function(x, y, type) {
       switch (type) {
         case FIELD_TYPE_ENEMY:
@@ -47,17 +62,38 @@
       }
     },
     getPlayerInField: function($field) {
-      var playerFound;
+      var playerFound = null;
       this.renderTargets.forEach(function(player){
-        if (player.$field.id === $field.id) {
+        if (player.$field && (player.$field.id === $field.id)) {
           playerFound = player;
-          console.log(playerFound);
         }
       });
 
       return playerFound;
+    },
+    renderSelectAction: function() {
+      $('.a').innerHTML = this.currentSelection.renderActions();
+      this.currentSelection.$field.appendChild($('.a'));
+    },
+    hideSelectAction: function() {
+      $('.a').innerHTML = '';
     }
   };
+
+  Object.defineProperty(Stage.prototype, 'state', {
+    get: function(){
+      return this._state;
+    },
+    set: function(state) {
+      this._state = state;
+      if (state === this.GAME_STATE_SELECT_ACTION) {
+        this.renderSelectAction();
+      }
+      else {
+        this.hideSelectAction();
+      }
+    }
+  });
 
   var mappedEnemyFields =
     [

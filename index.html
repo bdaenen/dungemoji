@@ -42,7 +42,20 @@ td {
   border: 1px solid black;
   width: 33%;
   height: 33%;
-}</style><div id="m"><table id="e"><tr id="e-b"><td id="e-b-l">ENEMY LEFT</td><td id="e-b-c">ENEMY CENTER</td><td id="e-b-r">ENEMY RIGHT</td></tr><tr id="e-m"><td id="e-m-l">ENEMY LEFT</td><td id="e-m-c">ENEMY CENTER</td><td id="e-m-r">ENEMY RIGHT</td></tr><tr id="e-f"><td id="e-f-l">👻</td><td id="e-f-c">👹</td><td id="e-f-r">🐉</td></tr></table><table id="p"><tr id="p-f"><td id="p-f-l"></td><td id="p-f-c"></td><td id="p-f-r"></td></tr><tr id="p-m"><td id="p-m-l"></td><td id="p-m-c"></td><td id="p-m-r"></td></tr><tr id="p-b"><td id="p-b-l"></td><td id="p-b-c"></td><td id="p-b-r"></td></tr></table></div><script>window.$ = document.querySelector.bind(document);window.$$ = document.querySelectorAll.bind(document);window.find = function(parent, searchTerm){return parent.querySelectorAll(searchTerm)};</script><script>(function () {
+  position: relative;
+}
+ul,
+li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.a {
+  top: 0;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+}</style><div id="m"><ul class="a"></ul><table id="e"><tr id="e-b"><td id="e-b-l"></td><td id="e-b-c"></td><td id="e-b-r"></td></tr><tr id="e-m"><td id="e-m-l"></td><td id="e-m-c"></td><td id="e-m-r"></td></tr><tr id="e-f"><td id="e-f-l"></td><td id="e-f-c"></td><td id="e-f-r"></td></tr></table><table id="p"><tr id="p-f"><td id="p-f-l"></td><td id="p-f-c"></td><td id="p-f-r"></td></tr><tr id="p-m"><td id="p-m-l"></td><td id="p-m-c"></td><td id="p-m-r"></td></tr><tr id="p-b"><td id="p-b-l"></td><td id="p-b-c"></td><td id="p-b-r"></td></tr></table></div><script>window.$ = document.querySelector.bind(document);window.$$ = document.querySelectorAll.bind(document);window.find = function(parent, searchTerm){return parent.querySelectorAll(searchTerm)};</script><script>(function () {
   'use strict';
 
   var Player = function(stage){
@@ -56,12 +69,19 @@ td {
     this.health = this.maxHealth;
     this.view = "👦🤵🏻";
     this.$field = null;
-    console.log(this.stage);
+    this.actions = [{
+      actionId: 'move',
+      view: '🏃'
+    }];
     this.move(this.position.x, this.position.y);
   };
 
   Player.prototype = {
     move: function(x, y){
+      if (this.stage.getPlayerInField(this.stage.getFieldByCoordinate(x, y))) {
+        console.warn('cant move to occupied field');
+        return false;
+      }
       this.position.x = x;
       this.position.y = y;
       this.stage.dirty = true;
@@ -80,6 +100,17 @@ td {
       div.innerText += this.view;
       div.dataset.player = this;
       this.$field = div;
+    },
+    renderActions: function () {
+      var b = document.createElement('b');
+      this.actions.forEach(function(action) {
+        var $n = document.createElement('li');
+        $n.innerText = action.view;
+        $n.dataset.actionId = action.actionId;
+        b.appendChild($n);
+      }, this);
+
+      return b.innerHTML;
     }
   };
 
@@ -101,9 +132,18 @@ td {
   var Stage = function(){
     this.renderTargets = [];
     this.dirty = false;
+    this._state = this.GAME_STATE_SELECT_CHARACTER;
+    this.turn = this.TURN_PLAYER;
+    this.currentSelection = null;
   };
 
   Stage.prototype = {
+    GAME_STATE_SELECT_CHARACTER: 1,
+    GAME_STATE_SELECT_ACTION: 2,
+    GAME_STATE_SELECT_POSITION: 3,
+    GAME_STATE_SELECT_TARGET: 4,
+    TURN_PLAYER: 1,
+    TURN_ENEMY: 2,
     init: function(){},
     addPlayer: function(player){
       this.renderTargets.push(player);
@@ -129,6 +169,12 @@ td {
       }, this);
       this.dirty = false;
     },
+    /**
+     * @param x
+     * @param y
+     * @param [type=FIELD_TYPE_STAGE]
+     * @returns {*}
+     */
     getFieldByCoordinate: function(x, y, type) {
       switch (type) {
         case FIELD_TYPE_ENEMY:
@@ -144,17 +190,38 @@ td {
       }
     },
     getPlayerInField: function($field) {
-      var playerFound;
+      var playerFound = null;
       this.renderTargets.forEach(function(player){
-        if (player.$field.id === $field.id) {
+        if (player.$field && (player.$field.id === $field.id)) {
           playerFound = player;
-          console.log(playerFound);
         }
       });
 
       return playerFound;
+    },
+    renderSelectAction: function() {
+      $('.a').innerHTML = this.currentSelection.renderActions();
+      this.currentSelection.$field.appendChild($('.a'));
+    },
+    hideSelectAction: function() {
+      $('.a').innerHTML = '';
     }
   };
+
+  Object.defineProperty(Stage.prototype, 'state', {
+    get: function(){
+      return this._state;
+    },
+    set: function(state) {
+      this._state = state;
+      if (state === this.GAME_STATE_SELECT_ACTION) {
+        this.renderSelectAction();
+      }
+      else {
+        this.hideSelectAction();
+      }
+    }
+  });
 
   var mappedEnemyFields =
     [
@@ -200,13 +267,14 @@ td {
   Stage1.prototype.constructor = Stage1;
 
   Stage1.prototype.init = function(){
-    var ghost = new Player(this);
-    ghost.move(1, 0);
-    ghost.view = "👻";
-    ghost.sta = 10;
-    this.addPlayer(ghost);
+    var mage = new Player(this);
+    mage.move(0, 5);
+    mage.view = "🧙";
+    mage.sta = 10;
+    this.addPlayer(mage);
 
     var warrior = new Player(this);
+    warrior.move(1, 3);
     // The below string is not empty, but PHPStorm fails to render it.
     warrior.view = "🤴🏻";
     this.addPlayer(warrior);
@@ -216,17 +284,6 @@ td {
 }());</script><script>(function() {
   'use strict';
   var currentStage = null;
-  var currentlySelected = null;
-
-  var GAME_STATE_SELECT_CHARACTER = 0;
-  var GAME_STATE_SELECT_POSITION = 1;
-  var GAME_STATE_SELECT_TARGET = 2;
-
-  var TURN_ENEMY = 1;
-  var TURN_PLAYER = 2;
-
-  var GAME_STATE = GAME_STATE_SELECT_CHARACTER;
-  var TURN = TURN_PLAYER;
 
   var stage1 = new Stage1();
   currentStage = stage1;
@@ -249,22 +306,25 @@ td {
   });
 
   function clickCallback(e) {
-    if (TURN !== TURN_PLAYER) {
+    if (currentStage.turn !== currentStage.TURN_PLAYER) {
       return;
     }
     var $field = e.target;
 
-    if(GAME_STATE === GAME_STATE_SELECT_CHARACTER){
-      currentlySelected = currentStage.getPlayerInField($field);
-      if (currentlySelected) {
-        GAME_STATE = GAME_STATE_SELECT_POSITION;
+    if(currentStage.state === currentStage.GAME_STATE_SELECT_CHARACTER){
+      currentStage.currentSelection = currentStage.getPlayerInField($field);
+      if (currentStage.currentSelection) {
+        currentStage.state = currentStage.GAME_STATE_SELECT_ACTION;
       }
     }
-    else if (GAME_STATE === GAME_STATE_SELECT_POSITION) {
-      currentlySelected.move(e.target.dataset.x, e.target.dataset.y);
-      GAME_STATE = GAME_STATE_SELECT_CHARACTER;
+    else if (currentStage.state === currentStage.GAME_STATE_SELECT_ACTION) {
+
     }
-    else if (GAME_STATE === GAME_STATE_SELECT_TARGET) {
+    else if (currentStage.state === currentStage.GAME_STATE_SELECT_POSITION) {
+      currentStage.currentSelection.move(e.target.dataset.x, e.target.dataset.y);
+      currentStage.state = currentStage.GAME_STATE_SELECT_CHARACTER;
+    }
+    else if (currentStage.state === currentStage.GAME_STATE_SELECT_TARGET) {
 
     }
   }

@@ -9,13 +9,14 @@
   Stage1.prototype.constructor = Stage1;
 
   Stage1.prototype.init = function(){
-    var ghost = new Player(this);
-    ghost.move(1, 0);
-    ghost.view = "👻";
-    ghost.sta = 10;
-    this.addPlayer(ghost);
+    var mage = new Player(this);
+    mage.move(0, 5);
+    mage.view = "🧙";
+    mage.sta = 10;
+    this.addPlayer(mage);
 
     var warrior = new Player(this);
+    warrior.move(1, 3);
     // The below string is not empty, but PHPStorm fails to render it.
     warrior.view = "🤴🏻";
     this.addPlayer(warrior);
