@@ -50,15 +50,25 @@
     getFieldByCoordinate: function(x, y, type) {
       switch (type) {
         case FIELD_TYPE_ENEMY:
-          return mappedEnemyFields[y][x];
+          return mappedEnemyFields[y] && mappedEnemyFields[y][x];
           break;
         case FIELD_TYPE_PLAYER:
-          return mappedPlayerFields[y][x];
+          return mappedPlayerFields[y] && mappedPlayerFields[y][x];
           break;
         case FIELD_TYPE_STAGE:
         default:
-          return mappedStage[y][x];
+          return mappedStage[y] && mappedStage[y][x];
           break;
+      }
+    },
+    getPlayerFieldByCoordinate: function(x, y, type) {
+      if (y > 2) {
+        return this.getFieldByCoordinate(x, y, type);
+      }
+    },
+    getEnemyFieldByCoordinate: function(x, y, type) {
+      if (y <= 2) {
+        return this.getFieldByCoordinate(x, y, type);
       }
     },
     getPlayerInField: function($field) {
@@ -95,14 +105,14 @@
     }
   });
 
-  var mappedEnemyFields =
+  window.mappedEnemyFields =
     [
       [$('#e-b-l'), $('#e-b-c'), $('#e-b-r')],
       [$('#e-m-l'), $('#e-m-c'), $('#e-m-r')],
       [$('#e-f-l'), $('#e-f-c'), $('#e-f-r')]
     ];
 
-  var mappedPlayerFields =
+  window.mappedPlayerFields =
     [
       [$('#p-f-l'), $('#p-f-c'), $('#p-f-r')],
       [$('#p-m-l'), $('#p-m-c'), $('#p-m-r')],

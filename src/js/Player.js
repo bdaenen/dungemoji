@@ -12,10 +12,17 @@
     this.health = this.maxHealth;
     this.view = "👦🤵🏻";
     this.$field = null;
-    this.actions = [{
-      actionId: 'move',
-      view: '🏃'
-    }];
+    this.currentAction = null;
+    this.actions = [
+      {
+        actionId: 'move',
+        view: '🏃'
+      },
+      {
+        actionId: 'attack',
+        view: '🗡'
+      }
+    ];
     this.move(this.position.x, this.position.y);
   };
 
@@ -37,6 +44,24 @@
       }
       else {
         // Dodged
+      }
+    },
+    selectAction: function(actionId) {
+      this.currentAction = this.actions.filter(function(o){return o.actionId === actionId})[0];
+      this.stage.hideSelectAction();
+      this.renderValidActionTargets(this.currentAction);
+      this.state = this.GAME_STATE_SELECT_TARGET;
+    },
+    renderValidActionTargets: function(action) {
+      if (action.actionId === 'move') {
+        var ff = this.stage.getPlayerFieldByCoordinate.bind(this.stage);
+        var x = this.position.x;
+        var y = this.position.y;
+        var f = [ff(x+1, y), ff(x-1, y), ff(x, y+1), ff(x, y-1)];
+        f = f.filter(function(o){return o});
+        f.forEach(function(o){
+          o.classList.add('valid');
+        })
       }
     },
     render: function(div) {

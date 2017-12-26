@@ -3,24 +3,18 @@
   padding: 0;
   color: #AAA;
 }
+body {
+  overflow: hidden;
+  position: relative;
+}
 html {
-  background-color: #333333;
+  height: 100%;
 }
 table,
 .emo {
   color: red;
   font-size: 3em;
   margin: 0;
-  text-transform: text;
-  /* proposed */
-  font-variant-emoji: text;
-  /* proposed */
-  font-variant-color: monochrome;
-  /* proposed */
-  font-color: monochrome;
-  /* proposed */
-  font-palette: dark;
-  /* drafted for CSS Fonts Level 4 */
 }
 table {
   table-layout: fixed;
@@ -30,6 +24,7 @@ table {
   border: 1px solid red;
   text-align: center;
   border-collapse: collapse;
+  background-color: #633f19;
 }
 #p tr:first-child td {
   border-top: 0;
@@ -51,8 +46,37 @@ li {
   padding: 0;
 }
 .a {
+  display: none;
   top: 0;
+  bottom: 0;
   position: absolute;
   background-color: rgba(0, 0, 0, 0.5);
   width: 100%;
+  z-index: 1;
+}
+.a li {
+  position: relative;
+  display: inline-block;
+  font-size: 40px;
+  height: 80px;
+  width: 80px;
+  vertical-align: middle;
+  line-height: 80px;
+  top: 30px;
+}
+.a li:after {
+  top: 0px;
+  left: 0;
+  content: '◼';
+  position: absolute;
+  z-index: -1;
+  font-size: 80px;
+  width: 80px;
+  height: 85px;
+}
+.valid {
+  background: rgba(0, 200, 0, 0.3);
+}
+td .a {
+  display: block;
 }

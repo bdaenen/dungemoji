@@ -3,16 +3,16 @@
   padding: 0;
   color: #AAA;
 }
-html {
-  background-color: #333333;
+body {
+  overflow: hidden;
+  position: relative;
 }
+html {
+  height: 100%;
+}
+
 table, .emo {
   color: red; font-size: 3em; margin: 0;
-  text-transform: text;           /* proposed */
-  font-variant-emoji: text;       /* proposed */
-  font-variant-color: monochrome; /* proposed */
-  font-color: monochrome;         /* proposed */
-  font-palette: dark;             /* drafted for CSS Fonts Level 4 */
 }
 table {
   table-layout: fixed;
@@ -22,6 +22,8 @@ table {
   border: 1px solid red;
   text-align: center;
   border-collapse: collapse;
+  //background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAlQTFRFilgjUzUV////jCxkcwAAAAN0Uk5T//8A18oNQQAAAUlJREFUeNrsl8sSwyAIRS/+/0e3afNQgxxsush06iajQUYUD1eZlbpptq/Stun+c8CsHbUSt9ZeS1/+fxVvtZ29Bst6feRHqyimalD+z/GmqN3Sfr+dqYu93mG5S9486LyNh73Wvq1R6jicfXK9ayd71T5tDXvx/RrRPqEL+bDfzqYcc9po1GWGa+9kUOYAbGholvXhWpnk35OhA51yXY3z8EKpz+zZvm7JA+BDggchHzI8AD4wD2b4MOYB8iHgAfABeYB8QB4AHxI8AD5keJDhQ/7SR3xIOIj5kMjEmA+/wYO4/pNeENV/0gui+k964Zs88Os/6QVR/Se9gPWf9ALWf9ILStV/1AtB/Se7Pw9uqg+QD6APEnwgfYB8mE6kz94LxIdAHyAfUB8AH1AfIB9QH/D7IKcPIj7M6YPJ98K8g0sX6jIPHgIMAP0GG+qy4VCAAAAAAElFTkSuQmCC');
+  background-color: #633f19;
 }
 
 #p {
@@ -49,8 +51,39 @@ ul, li {
 }
 
 .a {
+  display: none;
   top: 0;
+  bottom: 0;
   position: absolute;
   background-color: rgba(0, 0, 0, 0.5);
   width: 100%;
+  z-index: 1;
+  li {
+    position: relative;
+    display: inline-block;
+    font-size: 40px;
+    height: 80px;
+    width: 80px;
+    vertical-align: middle;
+    line-height: 80px;
+    top: 30px;
+    &:after {
+      top: 0px;
+      left: 0;
+      content: '◼';
+      position: absolute;
+      z-index: -1;
+      font-size: 80px;
+      width: 80px;
+      height: 85px;
+    }
+  }
+}
+
+.valid {
+  background: rgba(0, 200, 0, 0.3);
+}
+
+td .a {
+  display: block;
 }
