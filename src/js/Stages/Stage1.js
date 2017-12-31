@@ -10,9 +10,9 @@
 
   Stage1.prototype.init = function(){
     // Mage
-    this.addActor(createPlayer(this, 0, 5, "🕺"));
+    this.addActor(createPlayer(this, 0, 5, "🧙🏻‍♂"));
     // Rogue
-    this.addActor(createPlayer(this, 2, 5, '🤢'));
+    this.addActor(createPlayer(this, 2, 5, '🧝🏼'));
     // Warrior
     this.addActor(createPlayer(this, 1, 3, '😡'));
 
