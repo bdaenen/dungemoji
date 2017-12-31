@@ -3,15 +3,19 @@
   var currentStage = null;
   var canvas = document.createElement('canvas');
   var ctx = canvas.getContext('2d');
-  canvas.width = canvas.height = 56;
-  ctx.font = '64px sans-serif';
-  ctx.fillText('⬛', -4, 56);
+  canvas.width = canvas.height = 55;
+  ctx.font = '72px "Segoe Ui Emoji"';
+  ctx.fillText('⬛', -9, 53);
+  //$('body').appendChild(canvas);
   $('#m').style.backgroundImage = 'url("' + canvas.toDataURL() + '")';
   var stage1 = new Stage1();
   currentStage = stage1;
   stage1.init();
 
   var gameLoop = function() {
+    if (currentStage.turn === currentStage.TYPE_ENEMY && !currentStage.isAiBusy) {
+      currentStage.updateAi();
+    }
     if (currentStage.dirty) {
       currentStage.render();
     }
@@ -27,7 +31,7 @@
   });
 
   function clickCallback(e) {
-    if (currentStage.turn !== currentStage.TURN_PLAYER) {
+    if (currentStage.turn !== currentStage.TYPE_PLAYER) {
       return;
     }
     var $field = e.target;
@@ -40,13 +44,20 @@
     }
     else if (currentStage.state === currentStage.GAME_STATE_SELECT_ACTION) {
       var a;
-      if (a = e.target.dataset.actionId) {
+      if (a = $field.dataset.actionId) {
         currentStage.currentSelection.selectAction(a);
       }
     }
-    else if (currentStage.state === currentStage.GAME_STATE_SELECT_TARGET) {
-      currentStage.currentSelection.move(e.target.dataset.x, e.target.dataset.y);
-      currentStage.state = currentStage.GAME_STATE_SELECT_CHARACTER;
+    else if (currentStage.state === currentStage.GAME_STATE_SELECT_TARGET && $field.classList.contains('valid')) {
+      currentStage.currentSelection.performSelectedAction(e.target);
+      if (currentStage.currentSelection.hasMoved && currentStage.currentSelection.hasAttacked) {
+        currentStage.turn = currentStage.TYPE_ENEMY;
+      }
+      else {
+
+          currentStage.state = currentStage.GAME_STATE_SELECT_ACTION;
+          clickCallback(e);
+      }
     }
   }
 }());

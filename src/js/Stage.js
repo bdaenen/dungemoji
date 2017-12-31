@@ -5,8 +5,10 @@
     this.renderTargets = [];
     this.dirty = false;
     this._state = this.GAME_STATE_SELECT_CHARACTER;
-    this.turn = this.TURN_PLAYER;
+    this._turn = '';
+    this.turn = this.TYPE_PLAYER;
     this.currentSelection = null;
+    this.isAiBusy = false;
   };
 
   Stage.prototype = {
@@ -14,14 +16,14 @@
     GAME_STATE_SELECT_ACTION: 2,
     GAME_STATE_SELECT_POSITION: 3,
     GAME_STATE_SELECT_TARGET: 4,
-    TURN_PLAYER: 1,
-    TURN_ENEMY: 2,
+    TYPE_PLAYER: 1,
+    TYPE_ENEMY: 2,
     init: function(){},
-    addPlayer: function(player){
+    addActor: function(player){
       this.renderTargets.push(player);
       this.dirty = true;
     },
-    removePlayer: function(player){
+    removeActor: function(player){
       var idx = this.renderTargets.indexOf(player);
       idx !== -1 && this.renderTargets.splice(idx, 1);
       this.dirty = true;
@@ -67,6 +69,7 @@
       }
     },
     getEnemyFieldByCoordinate: function(x, y, type) {
+      console.log(y);
       if (y <= 2) {
         return this.getFieldByCoordinate(x, y, type);
       }
@@ -81,12 +84,18 @@
 
       return playerFound;
     },
+    updateAi: function() {
+
+    },
     renderSelectAction: function() {
-      $('.a').innerHTML = this.currentSelection.renderActions();
-      this.currentSelection.$field.appendChild($('.a'));
+      setTimeout(function(){
+        $('.a').innerHTML = this.currentSelection.renderActions();
+        this.currentSelection.$field.appendChild($('.a'));
+      }.bind(this), 100);
     },
     hideSelectAction: function() {
       $('.a').innerHTML = '';
+      $('#m').appendChild($('.a'));
     }
   };
 
@@ -102,6 +111,35 @@
       else {
         this.hideSelectAction();
       }
+    }
+  });
+
+  Object.defineProperty(Stage.prototype, 'turn', {
+    get: function(){
+      return this._turn;
+    },
+    set: function(turn){
+      var $turn = $('.turn');
+      var cl = $('html').classList;
+      this._turn = turn;
+      (turn === this.TYPE_ENEMY) ? (($turn.innerText = 'Enemy') && cl.add('enemy')) : (($turn.innerText = 'Player') && cl.remove('enemy'));
+      $turn.innerText += ' Turn';
+    }
+  });
+
+  Object.defineProperty(Stage.prototype, 'enemies', {
+    get: function() {
+      return this.renderTargets.filter(function(tar){
+        return tar.type === 'e';
+      });
+    }
+  });
+
+  Object.defineProperty(Stage.prototype, 'players', {
+    get: function() {
+      return this.renderTargets.filter(function(tar){
+        return tar.type === 'p';
+      });
     }
   });
 

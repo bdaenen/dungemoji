@@ -4,27 +4,34 @@
   color: #AAA;
 }
 body {
-  overflow: hidden;
   position: relative;
 }
 html {
   height: 100%;
 }
 table,
-.emo {
+.emo,
+canvas {
   color: red;
   font-size: 3em;
   margin: 0;
+  font-family: 'Segoe Ui Emoji', sans-serif;
 }
 table {
   table-layout: fixed;
   margin: 0 auto;
   width: 960px;
   height: 400px;
-  border: 1px solid red;
+  border: 5px solid green;
   text-align: center;
   border-collapse: collapse;
   background-color: #633f19;
+}
+.enemy table {
+  border: 5px solid red;
+}
+table:first-of-type tr:last-child td {
+  border-bottom: 0;
 }
 #p tr:first-child td {
   border-top: 0;
@@ -34,7 +41,7 @@ tr {
   height: 33%;
 }
 td {
-  border: 1px solid black;
+  border: 10px solid rgba(123, 77, 29, 0.4);
   width: 33%;
   height: 33%;
   position: relative;
@@ -65,12 +72,12 @@ li {
   top: 30px;
 }
 .a li:after {
-  top: 0px;
+  top: -5px;
   left: 0;
   content: '◼';
   position: absolute;
   z-index: -1;
-  font-size: 80px;
+  font-size: 100px;
   width: 80px;
   height: 85px;
 }
@@ -79,4 +86,19 @@ li {
 }
 td .a {
   display: block;
+}
+.turn {
+  position: absolute;
+  right: 0;
+  top: 55%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  color: green;
+  font-size: 40px;
+}
+.enemy .turn {
+  top: 45%;
+  bottom: auto;
+  color: red;
 }
