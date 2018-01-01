@@ -3,7 +3,7 @@
 
   var Spider = function(stage){
     Player.call(this, stage);
-    this.type = 'e';
+    this.type = stage.TYPE_ENEMY;
     this.view = '🕷';
     this.rotate = 180;
   };

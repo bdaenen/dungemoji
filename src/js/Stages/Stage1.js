@@ -18,8 +18,8 @@
 
     // Enemies
     this.addActor(create(this, 1, 2, 'Scorpion'));
-    var spider = create(this, 0, 2, 'Spider');
-    this.addActor(spider);
+   // var spider = create(this, 0, 2, 'Spider');
+   // this.addActor(spider);
   };
 
   function createPlayer(stage, x, y, view) {

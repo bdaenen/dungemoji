@@ -13,7 +13,7 @@
   stage1.init();
 
   var gameLoop = function() {
-    if (currentStage.turn === currentStage.TYPE_ENEMY && !currentStage.isAiBusy) {
+    if (currentStage.turn === currentStage.TYPE_ENEMY && currentStage.state !== currentStage.GAME_STATE_AI_BUSY) {
       currentStage.updateAi();
     }
     if (currentStage.dirty) {
@@ -54,7 +54,6 @@
         currentStage.turn = currentStage.TYPE_ENEMY;
       }
       else {
-
           currentStage.state = currentStage.GAME_STATE_SELECT_ACTION;
           clickCallback(e);
       }

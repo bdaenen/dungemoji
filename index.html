@@ -1,1 +1,765 @@
-<!doctype html><meta charset="utf-8"><style type="text/css">*{margin:0;padding:0;color:#aaa}body{position:relative}html{height:100%}.emo,canvas,table{color:red;font-size:3em;font-family:'Segoe Ui Emoji',sans-serif}table{table-layout:fixed;width:960px;height:400px;border:5px solid green;text-align:center;border-collapse:collapse;background-color:#633f19;margin:0 auto}.emo,canvas{margin:0}.enemy table{border:5px solid red}table:first-of-type tr:last-child td{border-bottom:0}#p tr:first-child td{border-top:0}.a,tr{width:100%}td,tr{height:33%}td{border:10px solid rgba(123,77,29,.4);width:33%;position:relative}li,ul{list-style:none;margin:0;padding:0}.a{display:none;top:0;bottom:0;position:absolute;background-color:rgba(0,0,0,.5);z-index:1}.a li,.turn{font-size:40px}.a li{display:inline-block;height:80px;width:80px;vertical-align:middle;line-height:80px;position:relative;top:30px}.a li:after{top:-5px;left:0;content:'◼';position:absolute;z-index:-1;font-size:100px;width:80px;height:85px}.valid{background:rgba(0,200,0,.3)}td .a{display:block}.turn{position:absolute;right:0;top:55%;transform:translate(-50%,-50%);background:rgba(0,0,0,.8);padding:20px;color:green}.enemy .turn{top:45%;bottom:auto;color:red}</style><div id="m"><ul class="a"></ul><table id="e"><tr id="e-b"><td id="e-b-l"></td><td id="e-b-c"></td><td id="e-b-r"></td></tr><tr id="e-m"><td id="e-m-l"></td><td id="e-m-c"></td><td id="e-m-r"></td></tr><tr id="e-f"><td id="e-f-l"></td><td id="e-f-c"></td><td id="e-f-r"></td></tr></table><table id="p"><tr id="p-f"><td id="p-f-l"></td><td id="p-f-c"></td><td id="p-f-r"></td></tr><tr id="p-m"><td id="p-m-l"></td><td id="p-m-c"></td><td id="p-m-r"></td></tr><tr id="p-b"><td id="p-b-l"></td><td id="p-b-c"></td><td id="p-b-r"></td></tr></table></div><div class="turn">Player Turn</div><script>window.$ = document.querySelector.bind(document);window.$$ = document.querySelectorAll.bind(document);window.find = function(parent, searchTerm){return parent.querySelectorAll(searchTerm)};</script><script>!function(){"use strict";var t=function(t){this.stage=t,this.position={x:0,y:0},this.str=10,this.dex=10,this.int=10,this._sta=10,this.maxHealth=10*this._sta,this.health=this.maxHealth,this.type="p",this.view="👦🤵🏻",this.$field=null,this.currentAction=null,this.rotate=0,this.hasAttacked=!1,this.hasMoved=!1,this.actions=[{actionId:"move",view:"🏃",range:1,type:t.TYPE_PLAYER},{actionId:"attack",view:"🗡",range:1,type:t.TYPE_ENEMY}]};t.prototype={move:function(t,i){return t instanceof Node?this.move(t.dataset.x,t.dataset.y):this.stage.getPlayerInField(this.stage.getFieldByCoordinate(t,i))?(console.warn("cant move to occupied field"),!1):(this.position.x=t,this.position.y=i,void(this.stage.dirty=!0))},attack:function(t){var i=this.stage.getPlayerInField(t),e=1;Math.random()>i.dex/100&&(Math.random()>this.dex/150&&(e=2),i.health-=2*this.str*e)},selectAction:function(t){this.currentAction=this.actions.filter(function(i){return i.actionId===t})[0],this.stage.hideSelectAction(),this.renderValidActionTargets(this.currentAction),this.stage.state=this.stage.GAME_STATE_SELECT_TARGET},performSelectedAction:function(t){this[this.currentAction.actionId](t),"move"===this.currentAction.actionId?this.hasMoved=!0:"attack"===this.currentAction.actionId&&(this.hasAttacked=!0),this.hideValidActionTargets()},renderValidActionTargets:function(t){var i,e,s,a,n;if(t.type===this.stage.TYPE_PLAYER){for(i=this.stage.getPlayerFieldByCoordinate.bind(this.stage),e=this.position.x,s=this.position.y,a=[],n=1;n<=t.range;n++)a=a.concat([i(e+n,s),i(e-n,s),i(e,s+n),i(e,s-n)]);(a=a.filter(function(t){return t})).forEach(function(t){t.classList.add("valid")})}else if(t.type===this.stage.TYPE_ENEMY){for(i=this.stage.getEnemyFieldByCoordinate.bind(this.stage),e=this.position.x,s=this.position.y,a=[],n=1;n<=t.range;n++)a=a.concat([i(e+n,s),i(e-n,s),i(e,s+n),i(e,s-n)]);(a=a.filter(function(t){return t})).forEach(function(t){t.classList.add("valid")})}},hideValidActionTargets:function(){$$(".valid").forEach(function(t){t.classList.remove("valid")})},render:function(t){t.innerText+=this.view,t.dataset.player=this,this.$field=t,this.$field.style.transform="rotate("+this.rotate+"deg)"},renderActions:function(){var t=document.createElement("b");return this.actions.forEach(function(i){if(!("move"===i.actionId&&this.hasMoved||"attack"===i.actionId&&this.hasAttacked)){var e=document.createElement("li");e.innerText=i.view,e.dataset.actionId=i.actionId,t.appendChild(e)}},this),t.innerHTML}},Object.defineProperty(t.prototype,"sta",{get:function(){return this._sta},set:function(t){this._sta=t,this.maxHealth=10*this._sta,this.health>this.maxHealth&&(this.health=this.maxHealth)}}),window.Player=t}();</script><script>!function(){"use strict";var t=function(t){Player.call(this,t),this.type="e",this.view="🕷",this.rotate=180};(t.prototype=Object.create(Player.prototype)).constructor=t,window.Spider=t}();</script><script>!function(){"use strict";var t=function(t){Player.call(this,t),this.type="e",this.view="🦂"};(t.prototype=Object.create(Player.prototype)).constructor=t,window.Scorpion=t}();</script><script>!function(){"use strict";var e=function(){this.renderTargets=[],this.dirty=!1,this._state=this.GAME_STATE_SELECT_CHARACTER,this._turn="",this.turn=this.TYPE_PLAYER,this.currentSelection=null,this.isAiBusy=!1};e.prototype={GAME_STATE_SELECT_CHARACTER:1,GAME_STATE_SELECT_ACTION:2,GAME_STATE_SELECT_POSITION:3,GAME_STATE_SELECT_TARGET:4,TYPE_PLAYER:1,TYPE_ENEMY:2,init:function(){},addActor:function(e){this.renderTargets.push(e),this.dirty=!0},removeActor:function(e){var t=this.renderTargets.indexOf(e);-1!==t&&this.renderTargets.splice(t,1),this.dirty=!0},render:function(){mappedStage.forEach(function(e){e.forEach(function(e){e.innerText=""})}),this.renderTargets.forEach(function(e){var t=this.getFieldByCoordinate(e.position.x,e.position.y);e.render(t)},this),this.dirty=!1},getFieldByCoordinate:function(e,t,n){switch(n){case FIELD_TYPE_ENEMY:return mappedEnemyFields[t]&&mappedEnemyFields[t][e];case FIELD_TYPE_PLAYER:return mappedPlayerFields[t]&&mappedPlayerFields[t][e];case FIELD_TYPE_STAGE:default:return mappedStage[t]&&mappedStage[t][e]}},getPlayerFieldByCoordinate:function(e,t,n){if(t>2)return this.getFieldByCoordinate(e,t,n)},getEnemyFieldByCoordinate:function(e,t,n){if(console.log(t),t<=2)return this.getFieldByCoordinate(e,t,n)},getPlayerInField:function(e){var t=null;return this.renderTargets.forEach(function(n){n.$field&&n.$field.id===e.id&&(t=n)}),t},updateAi:function(){},renderSelectAction:function(){setTimeout(function(){$(".a").innerHTML=this.currentSelection.renderActions(),this.currentSelection.$field.appendChild($(".a"))}.bind(this),100)},hideSelectAction:function(){$(".a").innerHTML="",$("#m").appendChild($(".a"))}},Object.defineProperty(e.prototype,"state",{get:function(){return this._state},set:function(e){this._state=e,e===this.GAME_STATE_SELECT_ACTION?this.renderSelectAction():this.hideSelectAction()}}),Object.defineProperty(e.prototype,"turn",{get:function(){return this._turn},set:function(e){var t=$(".turn"),n=$("html").classList;this._turn=e,e===this.TYPE_ENEMY?(t.innerText="Enemy")&&n.add("enemy"):(t.innerText="Player")&&n.remove("enemy"),t.innerText+=" Turn"}}),Object.defineProperty(e.prototype,"enemies",{get:function(){return this.renderTargets.filter(function(e){return"e"===e.type})}}),Object.defineProperty(e.prototype,"players",{get:function(){return this.renderTargets.filter(function(e){return"p"===e.type})}}),window.mappedEnemyFields=[[$("#e-b-l"),$("#e-b-c"),$("#e-b-r")],[$("#e-m-l"),$("#e-m-c"),$("#e-m-r")],[$("#e-f-l"),$("#e-f-c"),$("#e-f-r")]],window.mappedPlayerFields=[[$("#p-f-l"),$("#p-f-c"),$("#p-f-r")],[$("#p-m-l"),$("#p-m-c"),$("#p-m-r")],[$("#p-b-l"),$("#p-b-c"),$("#p-b-r")]],window.mappedStage=mappedEnemyFields.concat(mappedPlayerFields);var t=0,n=0;mappedStage.forEach(function(e){e.forEach(function(e){e.dataset.x=t,e.dataset.y=n,t++}),n++,t=0}),window.FIELD_TYPE_PLAYER=1,window.FIELD_TYPE_ENEMY=2,window.FIELD_TYPE_STAGE=3,window.Stage=e}();</script><script>!function(){"use strict";function t(t,i,o,r){var e=new Player(t);return e.move(i,o),e.view=r,e}function i(t,i,o,r){var e=new window[r](t);return e.move(i,o),e}var o=function(){Stage.call(this)};(o.prototype=Object.create(Stage.prototype)).constructor=o,o.prototype.init=function(){this.addActor(t(this,0,5,"🧙🏻‍♂")),this.addActor(t(this,2,5,"🧝🏼")),this.addActor(t(this,1,3,"😡")),this.addActor(i(this,1,2,"Scorpion"));var o=i(this,0,2,"Spider");this.addActor(o)},window.Stage1=o}();</script><script>!function(){"use strict";function t(n){if(e.turn===e.TYPE_PLAYER){var a=n.target;if(e.state===e.GAME_STATE_SELECT_CHARACTER)e.currentSelection=e.getPlayerInField(a),e.currentSelection&&(e.state=e.GAME_STATE_SELECT_ACTION);else if(e.state===e.GAME_STATE_SELECT_ACTION){var i;(i=a.dataset.actionId)&&e.currentSelection.selectAction(i)}else e.state===e.GAME_STATE_SELECT_TARGET&&a.classList.contains("valid")&&(e.currentSelection.performSelectedAction(n.target),e.currentSelection.hasMoved&&e.currentSelection.hasAttacked?e.turn=e.TYPE_ENEMY:(e.state=e.GAME_STATE_SELECT_ACTION,t(n)))}}var e=null,n=document.createElement("canvas"),a=n.getContext("2d");n.width=n.height=55,a.font='72px "Segoe Ui Emoji"',a.fillText("⬛",-9,53),$("#m").style.backgroundImage='url("'+n.toDataURL()+'")';var i=new Stage1;e=i,i.init();var r=function(){e.turn!==e.TYPE_ENEMY||e.isAiBusy||e.updateAi(),e.dirty&&e.render(),requestAnimationFrame(r)};r(),mappedStage.forEach(function(e){e.forEach(function(e){e.addEventListener("click",t)})})}();</script>
+<!doctype html>
+<meta charset="utf-8" />
+<style type="text/css">* {
+  margin: 0;
+  padding: 0;
+  color: #AAA;
+}
+body {
+  position: relative;
+}
+html {
+  height: 100%;
+}
+table,
+.emo,
+canvas {
+  color: red;
+  font-size: 3em;
+  margin: 0;
+  font-family: 'Segoe Ui Emoji', sans-serif;
+}
+table {
+  table-layout: fixed;
+  margin: 0 auto;
+  width: 960px;
+  height: 400px;
+  border: 5px solid green;
+  text-align: center;
+  border-collapse: collapse;
+  background-color: #633f19;
+}
+.enemy table {
+  border: 5px solid red;
+}
+table:first-of-type tr:last-child td {
+  border-bottom: 0;
+}
+#p tr:first-child td {
+  border-top: 0;
+}
+tr {
+  width: 100%;
+  height: 33%;
+}
+td {
+  border: 10px solid rgba(123, 77, 29, 0.4);
+  width: 33%;
+  height: 33%;
+  position: relative;
+}
+ul,
+li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.a {
+  display: none;
+  top: 0;
+  bottom: 0;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  z-index: 1;
+}
+.a li {
+  position: relative;
+  display: inline-block;
+  font-size: 40px;
+  height: 80px;
+  width: 80px;
+  vertical-align: middle;
+  line-height: 80px;
+  top: 30px;
+}
+.a li:after {
+  top: -5px;
+  left: 0;
+  content: '◼';
+  position: absolute;
+  z-index: -1;
+  font-size: 100px;
+  width: 80px;
+  height: 85px;
+}
+.valid {
+  background: rgba(0, 200, 0, 0.3);
+}
+td .a {
+  display: block;
+}
+.turn {
+  position: absolute;
+  right: 0;
+  top: 55%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  color: green;
+  font-size: 40px;
+}
+.enemy .turn {
+  top: 45%;
+  bottom: auto;
+  color: red;
+}
+.a li[data-action-id="endTurn"]:before {
+  content: '';
+  position: absolute;
+  top: 25px;
+  bottom: 40px;
+  width: auto;
+  background: #0078d7;
+  left: 20px;
+  right: 22px;
+}
+.health {
+  font-size: 20px;
+  pointer-events: none;
+}
+.view {
+  pointer-events: none;
+}
+</style>
+
+<div id="m">
+    <ul class="a">
+    </ul>
+    <table id="e">
+        <tr id="e-b">
+            <td id="e-b-l"></td>
+            <td id="e-b-c"></td>
+            <td id="e-b-r"></td>
+        </tr>
+        <tr id="e-m">
+            <td id="e-m-l"></td>
+            <td id="e-m-c"></td>
+            <td id="e-m-r"></td>
+        </tr>
+        <tr id="e-f">
+            <td id="e-f-l"></td>
+            <td id="e-f-c"></td>
+            <td id="e-f-r"></td>
+        </tr>
+    </table>
+    <table id="p">
+        <tr id="p-f">
+            <td id="p-f-l"></td>
+            <td id="p-f-c"></td>
+            <td id="p-f-r"></td>
+        </tr>
+        <tr id="p-m">
+            <td id="p-m-l"></td>
+            <td id="p-m-c"></td>
+            <td id="p-m-r"></td>
+        </tr>
+        <tr id="p-b">
+            <td id="p-b-l"></td>
+            <td id="p-b-c"></td>
+            <td id="p-b-r"></td>
+        </tr>
+    </table>
+</div>
+<div class="turn">Player Turn</div>
+<script>window.$ = document.querySelector.bind(document);window.$$ = document.querySelectorAll.bind(document);window.find = function(parent, searchTerm){return parent.querySelectorAll(searchTerm)};</script>
+<script>(function () {
+  'use strict';
+
+  var Player = function(stage){
+    this.stage = stage;
+    this.position = {x:0,y:0};
+    this.str = 1;
+    this.dex = 10;
+    this.int = 10;
+    this._sta = 5;
+    this.maxHealth = this._sta;
+    this.health = this._sta;
+    this.type = stage.TYPE_PLAYER;
+    this.view = "👦🤵🏻";
+    this.$field = null;
+    this.currentAction = null;
+    this.rotate = 0;
+    this.hasAttacked = false;
+    this.hasMoved = false;
+    this.actions = [
+      {
+        actionId: 'move',
+        view: '🏃',
+        range: 1,
+        type: stage.TYPE_PLAYER
+      },
+      {
+        actionId: 'attack',
+        view: '🗡',
+        range: 1,
+        rangeX: 0,
+        type: stage.TYPE_ENEMY
+      },
+      {
+        actionId: 'endTurn',
+        view: '🔚'
+      }
+    ];
+  };
+
+  Player.prototype = {
+    move: function(x, y){
+      if (x instanceof Node) {
+        return this.move(x.dataset.x, x.dataset.y);
+      }
+      if (this.stage.getPlayerInField(this.stage.getFieldByCoordinate(x, y))) {
+        console.warn('cant move to occupied field');
+        return false;
+      }
+      this.position.x = x;
+      this.position.y = y;
+      this.stage.dirty = true;
+    },
+    attack: function($field) {
+      var target = this.stage.getPlayerInField($field);
+      var critmp = 1;
+      if (Math.random() > target.dex/100) {
+        (Math.random() < this.dex/150) && (critmp = 2) && console.log('Critical hit!');
+        target.health -= (this.str * 2 * critmp);
+        console.log('Dealt ' + (this.str * 2 * critmp) + ' damage');
+      }
+      else {
+        console.log('Dodged!');
+        // Dodged
+      }
+    },
+    selectAction: function(actionId) {
+      this.currentAction = this.actions.filter(function(o){return o.actionId === actionId})[0];
+      this.stage.hideSelectAction();
+
+      if (this.currentAction.range) {
+        this.renderValidActionTargets(this.currentAction);
+        this.stage.state = this.stage.GAME_STATE_SELECT_TARGET;
+      }
+      else {
+        if (actionId === 'endTurn') {
+          this.stage.turn = this.stage.TYPE_ENEMY;
+          this.stage.state = this.stage.GAME_STATE_SELECT_CHARACTER;
+        }
+      }
+    },
+    performSelectedAction: function($field) {
+      this[this.currentAction.actionId]($field);
+      if (this.currentAction.actionId === 'move') {
+        this.hasMoved = true;
+      }
+      else if (this.currentAction.actionId === 'attack') {
+        this.hasAttacked = true;
+      }
+      this.hideValidActionTargets();
+      this.stage.dirty = true;
+    },
+    renderValidActionTargets: function(action) {
+      var ff;
+      var x;
+      var y;
+      var f;
+      var i;
+
+      if (action.type === this.stage.TYPE_PLAYER) {
+        if (this.type === this.stage.TYPE_PLAYER) {
+          ff = this.stage.getPlayerFieldByCoordinate.bind(this.stage);
+        }
+        else {
+          ff = this.stage.getEnemyFieldByCoordinate.bind(this.stage);
+        }
+        x = this.position.x;
+        y = this.position.y;
+        f = [];
+        for (i = 1; i <= action.range; i++) {
+          f = f.concat([ff(x+i, y), ff(x-i, y), ff(x, y+i), ff(x, y-i)]);
+        }
+        // Filter out undefined nodes and occupied nodes.
+        f = f.filter(function(o){return (o && !(find(o, '.view').length))});
+        f.forEach(function(o){
+          o.classList.add('valid');
+        })
+      }
+      else if (action.type === this.stage.TYPE_ENEMY) {
+        if (this.type === this.stage.TYPE_PLAYER) {
+          ff = this.stage.getEnemyFieldByCoordinate.bind(this.stage);
+        }
+        else {
+          ff = this.stage.getPlayerFieldByCoordinate.bind(this.stage);
+        }
+        x = this.position.x;
+        y = this.position.y;
+        f = [];
+        for (i = 1; i <= action.range; i++) {
+          f = f.concat([ff(x+i, y), ff(x-i, y), ff(x, y+i), ff(x, y-i)]);
+        }
+        f = f.filter(function(o){return o});
+        f.forEach(function(o){
+          o.classList.add('valid');
+        })
+      }
+    },
+    hideValidActionTargets: function() {
+      $$('.valid').forEach(function(n){n.classList.remove('valid')});
+    },
+    render: function(div) {
+      var viewElement = document.createElement('div');
+      viewElement.innerText = this.view;
+      viewElement.classList.add('view');
+      viewElement.style.transform = 'rotate(' + this.rotate + 'deg)';
+      div.appendChild(viewElement);
+
+      this.$field = div;
+
+      var healthContainer = document.createElement('div');
+      healthContainer.classList.add('health');
+
+      for (var i = this.health; i > 0; i--) {
+        healthContainer.innerText += '❤';
+      }
+      this.$field.appendChild(healthContainer);
+
+    },
+    renderActions: function () {
+      var b = document.createElement('b');
+      this.actions.forEach(function(action) {
+        if ((action.actionId === 'move') && this.hasMoved) {
+          return;
+        }
+        else if ((action.actionId === 'attack') && this.hasAttacked) {
+          return;
+        }
+        var $n = document.createElement('li');
+        $n.innerText = action.view;
+        $n.dataset.actionId = action.actionId;
+        b.appendChild($n);
+      }, this);
+
+      return b.innerHTML;
+    },
+    inAttackRange: function (target) {
+      var atk = this.actions.filter(function (o) {
+        return o.actionId === 'attack'
+      })[0];
+
+      return (Math.abs(target.position.y - this.position.y) <= atk.range) && (Math.abs(target.position.x - this.position.x) <= atk.rangeX);
+    },
+    getClosest: function(targetType) {
+      var closestDistance = Infinity;
+      var closestTarget = null;
+      if (targetType === this.stage.TYPE_PLAYER) {
+        var coords = [];
+
+        this.stage.players.forEach(function(player){
+          var distance = Math.abs(player.position.x - this.position.x) + Math.abs(player.position.y - this.position.y);
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestTarget = player;
+          }
+        }, this);
+      }
+
+      return closestTarget;
+    }
+  };
+
+  Object.defineProperty(Player.prototype, 'sta', {
+    get: function() {
+      return this._sta;
+    },
+    set: function(sta) {
+      this._sta = sta;
+      this.maxHealth = this._sta;
+      this.health > this.maxHealth && (this.health = this.maxHealth);
+    }
+  });
+
+  window.Player = Player;
+}());
+</script>
+<script>(function () {
+  'use strict';
+
+  var Spider = function(stage){
+    Player.call(this, stage);
+    this.type = stage.TYPE_ENEMY;
+    this.view = '🕷';
+    this.rotate = 180;
+  };
+
+  Spider.prototype = Object.create(Player.prototype);
+  Spider.prototype.constructor = Spider;
+
+  window.Spider = Spider;
+}());
+</script>
+<script>(function () {
+  'use strict';
+
+  var Scorpion = function(stage){
+    Player.call(this, stage);
+    this.type = stage.TYPE_ENEMY;
+    this.view = '🦂';
+    this.playerTarget = null;
+  };
+
+  Scorpion.prototype = Object.create(Player.prototype);
+  Scorpion.prototype.constructor = Scorpion;
+
+  Scorpion.prototype.determineTarget = function() {
+    this.playerTarget = null;
+    this.stage.players.forEach(function(player){
+      if (this.playerTarget) {
+        return;
+      }
+
+      if (this.inAttackRange(player)) {
+        this.playerTarget = player;
+      }
+    }, this);
+
+    if (!this.playerTarget) {
+      this.playerTarget = this.getClosest(this.stage.TYPE_PLAYER);
+    }
+
+    console.log("targeted:", this.playerTarget.view);
+    return this;
+  };
+
+  Scorpion.prototype.performMoveOrAttack = function() {
+    if (this.inAttackRange(this.playerTarget) && !this.hasAttacked) {
+      console.log('attacking', this.playerTarget.view);
+      this.selectAction('attack');
+      this.performSelectedAction(this.playerTarget.$field);
+    }
+    else if (!this.hasMoved) {
+      var x = this.position.x;
+      var y = this.position.y;
+      var deltaX = x - this.playerTarget.position.x;
+      var deltaY = 2 - y;
+      var $field = null;
+
+      if (deltaY > 0) {
+        $field = this.stage.getEnemyFieldByCoordinate(x, y+1);
+      }
+      else if (deltaX > 0) {
+        $field = this.stage.getEnemyFieldByCoordinate(x-1, y);
+      }
+      else if (deltaX < 0) {
+        $field = this.stage.getEnemyFieldByCoordinate(x+1, y);
+      }
+
+      if ($field) {
+        this.selectAction('move');
+        this.performSelectedAction($field);
+      }
+      else {
+        this.hasMoved = true;
+      }
+    }
+    else {
+      this.hasMoved = true;
+      this.hasAttacked = true;
+      this.selectAction('endTurn');
+    }
+
+    this.stage.state = this.stage.GAME_STATE_AI_BUSY;
+  };
+
+  window.Scorpion = Scorpion;
+}());
+</script>
+<script>(function () {
+  'use strict';
+
+  var Stage = function(){
+    this.renderTargets = [];
+    this.dirty = false;
+    this._state = this.GAME_STATE_SELECT_CHARACTER;
+    this._turn = '';
+    this.turn = this.TYPE_PLAYER;
+    this.currentSelection = null;
+  };
+
+  Stage.prototype = {
+    GAME_STATE_SELECT_CHARACTER: 1,
+    GAME_STATE_SELECT_ACTION: 2,
+    GAME_STATE_SELECT_POSITION: 3,
+    GAME_STATE_SELECT_TARGET: 4,
+    GAME_STATE_AI_BUSY: 5,
+    TYPE_PLAYER: 1,
+    TYPE_ENEMY: 2,
+    init: function(){},
+    addActor: function(player){
+      this.renderTargets.push(player);
+      this.dirty = true;
+    },
+    removeActor: function(player){
+      var idx = this.renderTargets.indexOf(player);
+      idx !== -1 && this.renderTargets.splice(idx, 1);
+      this.dirty = true;
+    },
+    render: function(){
+      // Clear the field
+      mappedStage.forEach(function(row){
+        row.forEach(function(col) {
+          col.innerText = '';
+        });
+      });
+
+      // Render the stage
+      this.renderTargets.forEach(function(item){
+        var $field = this.getFieldByCoordinate(item.position.x, item.position.y);
+        item.render($field);
+      }, this);
+      this.dirty = false;
+    },
+    /**
+     * @param x
+     * @param y
+     * @param [type=FIELD_TYPE_STAGE]
+     * @returns {*}
+     */
+    getFieldByCoordinate: function(x, y, type) {
+      switch (type) {
+        case FIELD_TYPE_ENEMY:
+          return mappedEnemyFields[y] && mappedEnemyFields[y][x];
+          break;
+        case FIELD_TYPE_PLAYER:
+          return mappedPlayerFields[y] && mappedPlayerFields[y][x];
+          break;
+        case FIELD_TYPE_STAGE:
+        default:
+          return mappedStage[y] && mappedStage[y][x];
+          break;
+      }
+    },
+    getPlayerFieldByCoordinate: function(x, y, type) {
+      if (y > 2) {
+        return this.getFieldByCoordinate(x, y, type);
+      }
+    },
+    getEnemyFieldByCoordinate: function(x, y, type) {
+      if (y <= 2) {
+        return this.getFieldByCoordinate(x, y, type);
+      }
+    },
+    getPlayerInField: function($field) {
+      var playerFound = null;
+      this.renderTargets.forEach(function(player){
+        if (player.$field && (player.$field.id === $field.id)) {
+          playerFound = player;
+        }
+      });
+
+      return playerFound;
+    },
+    updateAi: function() {
+      this.state = this.GAME_STATE_AI_BUSY;
+      this.enemies.forEach(function(enemy, index){
+        enemy.determineTarget();
+        (function (enemy) {
+          setTimeout(function(){
+            enemy.performMoveOrAttack();
+          }.bind(this), (index+1)*1000);
+          setTimeout(function(){
+            enemy.performMoveOrAttack();
+          }.bind(this), (index+1)*2000);
+        }(enemy));
+      }, this);
+    },
+    renderSelectAction: function() {
+      setTimeout(function(){
+        $('.a').innerHTML = this.currentSelection.renderActions();
+        this.currentSelection.$field.appendChild($('.a'));
+      }.bind(this), 100);
+    },
+    hideSelectAction: function() {
+      $('.a').innerHTML = '';
+      $('#m').appendChild($('.a'));
+    }
+  };
+
+  Object.defineProperty(Stage.prototype, 'state', {
+    get: function(){
+      return this._state;
+    },
+    set: function(state) {
+      this._state = state;
+      if (state === this.GAME_STATE_SELECT_ACTION) {
+        this.renderSelectAction();
+      }
+      else {
+        this.hideSelectAction();
+      }
+    }
+  });
+
+  Object.defineProperty(Stage.prototype, 'turn', {
+    get: function(){
+      return this._turn;
+    },
+    set: function(turn){
+      var $turn = $('.turn');
+      var cl = $('html').classList;
+      this._turn = turn;
+      (turn === this.TYPE_ENEMY) ? (($turn.innerText = 'Enemy') && cl.add('enemy')) : (($turn.innerText = 'Player') && cl.remove('enemy'));
+      $turn.innerText += ' Turn';
+    }
+  });
+
+  Object.defineProperty(Stage.prototype, 'enemies', {
+    get: function() {
+      return this.renderTargets.filter(function(tar){
+        return tar.type === this.TYPE_ENEMY;
+      }, this);
+    }
+  });
+
+  Object.defineProperty(Stage.prototype, 'players', {
+    get: function() {
+      return this.renderTargets.filter(function(tar){
+        return tar.type === this.TYPE_PLAYER;
+      }, this);
+    }
+  });
+
+  window.mappedEnemyFields =
+    [
+      [$('#e-b-l'), $('#e-b-c'), $('#e-b-r')],
+      [$('#e-m-l'), $('#e-m-c'), $('#e-m-r')],
+      [$('#e-f-l'), $('#e-f-c'), $('#e-f-r')]
+    ];
+
+  window.mappedPlayerFields =
+    [
+      [$('#p-f-l'), $('#p-f-c'), $('#p-f-r')],
+      [$('#p-m-l'), $('#p-m-c'), $('#p-m-r')],
+      [$('#p-b-l'), $('#p-b-c'), $('#p-b-r')]
+    ];
+
+  window.mappedStage = mappedEnemyFields.concat(mappedPlayerFields);
+
+  var x = 0;
+  var y = 0;
+  mappedStage.forEach(function(row){
+    row.forEach(function($col){
+      $col.dataset.x = x;
+      $col.dataset.y = y;
+      x++;
+    });
+    y++;
+    x = 0;
+  });
+
+  window.FIELD_TYPE_PLAYER = 1;
+  window.FIELD_TYPE_ENEMY = 2;
+  window.FIELD_TYPE_STAGE = 3;
+
+  window.Stage = Stage;
+}());
+</script>
+<script>(function () {
+  'use strict';
+
+  var Stage1 = function(){
+    Stage.call(this);
+  };
+
+  Stage1.prototype = Object.create(Stage.prototype);
+  Stage1.prototype.constructor = Stage1;
+
+  Stage1.prototype.init = function(){
+    // Mage
+    this.addActor(createPlayer(this, 0, 5, "🧙🏻‍♂"));
+    // Rogue
+    this.addActor(createPlayer(this, 2, 5, '🧝🏼'));
+    // Warrior
+    this.addActor(createPlayer(this, 1, 3, '😡'));
+
+    // Enemies
+    this.addActor(create(this, 1, 2, 'Scorpion'));
+   // var spider = create(this, 0, 2, 'Spider');
+   // this.addActor(spider);
+  };
+
+  function createPlayer(stage, x, y, view) {
+    var p = new Player(stage);
+    p.move(x, y);
+    p.view = view;
+    return p;
+  }
+
+  function create(stage, x, y, cn){
+    var p = new window[cn](stage);
+    p.move(x, y);
+    return p;
+  }
+
+  window.Stage1 = Stage1;
+}());
+</script>
+<script>(function() {
+  'use strict';
+  var currentStage = null;
+  var canvas = document.createElement('canvas');
+  var ctx = canvas.getContext('2d');
+  canvas.width = canvas.height = 55;
+  ctx.font = '72px "Segoe Ui Emoji"';
+  ctx.fillText('⬛', -9, 53);
+  //$('body').appendChild(canvas);
+  $('#m').style.backgroundImage = 'url("' + canvas.toDataURL() + '")';
+  var stage1 = new Stage1();
+  currentStage = stage1;
+  stage1.init();
+
+  var gameLoop = function() {
+    if (currentStage.turn === currentStage.TYPE_ENEMY && currentStage.state !== currentStage.GAME_STATE_AI_BUSY) {
+      currentStage.updateAi();
+    }
+    if (currentStage.dirty) {
+      currentStage.render();
+    }
+    requestAnimationFrame(gameLoop);
+  };
+
+  gameLoop();
+
+  mappedStage.forEach(function(row){
+    row.forEach(function(col){
+      col.addEventListener('click', clickCallback);
+    });
+  });
+
+  function clickCallback(e) {
+    if (currentStage.turn !== currentStage.TYPE_PLAYER) {
+      return;
+    }
+    var $field = e.target;
+
+    if(currentStage.state === currentStage.GAME_STATE_SELECT_CHARACTER){
+      currentStage.currentSelection = currentStage.getPlayerInField($field);
+      if (currentStage.currentSelection) {
+        currentStage.state = currentStage.GAME_STATE_SELECT_ACTION;
+      }
+    }
+    else if (currentStage.state === currentStage.GAME_STATE_SELECT_ACTION) {
+      var a;
+      if (a = $field.dataset.actionId) {
+        currentStage.currentSelection.selectAction(a);
+      }
+    }
+    else if (currentStage.state === currentStage.GAME_STATE_SELECT_TARGET && $field.classList.contains('valid')) {
+      currentStage.currentSelection.performSelectedAction(e.target);
+      if (currentStage.currentSelection.hasMoved && currentStage.currentSelection.hasAttacked) {
+        currentStage.turn = currentStage.TYPE_ENEMY;
+      }
+      else {
+          currentStage.state = currentStage.GAME_STATE_SELECT_ACTION;
+          clickCallback(e);
+      }
+    }
+  }
+}());
+</script>

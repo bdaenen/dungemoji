@@ -8,7 +8,6 @@
     this._turn = '';
     this.turn = this.TYPE_PLAYER;
     this.currentSelection = null;
-    this.isAiBusy = false;
   };
 
   Stage.prototype = {
@@ -16,6 +15,7 @@
     GAME_STATE_SELECT_ACTION: 2,
     GAME_STATE_SELECT_POSITION: 3,
     GAME_STATE_SELECT_TARGET: 4,
+    GAME_STATE_AI_BUSY: 5,
     TYPE_PLAYER: 1,
     TYPE_ENEMY: 2,
     init: function(){},
@@ -69,7 +69,6 @@
       }
     },
     getEnemyFieldByCoordinate: function(x, y, type) {
-      console.log(y);
       if (y <= 2) {
         return this.getFieldByCoordinate(x, y, type);
       }
@@ -85,7 +84,18 @@
       return playerFound;
     },
     updateAi: function() {
-
+      this.state = this.GAME_STATE_AI_BUSY;
+      this.enemies.forEach(function(enemy, index){
+        enemy.determineTarget();
+        (function (enemy) {
+          setTimeout(function(){
+            enemy.performMoveOrAttack();
+          }.bind(this), (index+1)*1000);
+          setTimeout(function(){
+            enemy.performMoveOrAttack();
+          }.bind(this), (index+1)*2000);
+        }(enemy));
+      }, this);
     },
     renderSelectAction: function() {
       setTimeout(function(){
@@ -130,16 +140,16 @@
   Object.defineProperty(Stage.prototype, 'enemies', {
     get: function() {
       return this.renderTargets.filter(function(tar){
-        return tar.type === 'e';
-      });
+        return tar.type === this.TYPE_ENEMY;
+      }, this);
     }
   });
 
   Object.defineProperty(Stage.prototype, 'players', {
     get: function() {
       return this.renderTargets.filter(function(tar){
-        return tar.type === 'p';
-      });
+        return tar.type === this.TYPE_PLAYER;
+      }, this);
     }
   });
 
