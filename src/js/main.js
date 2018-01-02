@@ -37,7 +37,7 @@
     var $field = e.target;
 
     if(currentStage.state === currentStage.GAME_STATE_SELECT_CHARACTER){
-      currentStage.currentSelection = currentStage.getPlayerInField($field);
+      currentStage.currentSelection = currentStage.getPlayerInField($field, currentStage.TYPE_PLAYER, true);
       if (currentStage.currentSelection) {
         currentStage.state = currentStage.GAME_STATE_SELECT_ACTION;
       }
@@ -46,16 +46,28 @@
       var a;
       if (a = $field.dataset.actionId) {
         currentStage.currentSelection.selectAction(a);
+        e.stopPropagation();
+      }
+      // Changing character
+      else if (!currentStage.currentSelection.hasMoved && !currentStage.currentSelection.hasAttacked && currentStage.getPlayerInField($field, currentStage.TYPE_PLAYER, true)) {
+        currentStage.currentSelection = currentStage.getPlayerInField($field, currentStage.TYPE_PLAYER, true);
+        currentStage.state = currentStage.GAME_STATE_SELECT_ACTION;
       }
     }
-    else if (currentStage.state === currentStage.GAME_STATE_SELECT_TARGET && $field.classList.contains('valid')) {
-      currentStage.currentSelection.performSelectedAction(e.target);
-      if (currentStage.currentSelection.hasMoved && currentStage.currentSelection.hasAttacked) {
-        currentStage.turn = currentStage.TYPE_ENEMY;
-      }
-      else {
+    else if (currentStage.state === currentStage.GAME_STATE_SELECT_TARGET) {
+      if ($field.classList.contains('valid')) {
+        currentStage.currentSelection.performSelectedAction(e.target);
+        if (!currentStage.currentSelection.hasMoved || !currentStage.currentSelection.hasAttacked) {
           currentStage.state = currentStage.GAME_STATE_SELECT_ACTION;
           clickCallback(e);
+        }
+        else if (!currentStage.currentSelection.currentAction || currentStage.currentSelection.currentAction.actionId !== 'endTurn') {
+          currentStage.currentSelection.endTurn();
+        }
+      }
+      // Changing action
+      else if (a = $field.dataset.actionId) {
+        currentStage.currentSelection.selectAction(a);
       }
     }
   }

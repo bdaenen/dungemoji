@@ -13,9 +13,8 @@
   Stage.prototype = {
     GAME_STATE_SELECT_CHARACTER: 1,
     GAME_STATE_SELECT_ACTION: 2,
-    GAME_STATE_SELECT_POSITION: 3,
-    GAME_STATE_SELECT_TARGET: 4,
-    GAME_STATE_AI_BUSY: 5,
+    GAME_STATE_SELECT_TARGET: 3,
+    GAME_STATE_AI_BUSY: 4,
     TYPE_PLAYER: 1,
     TYPE_ENEMY: 2,
     init: function(){},
@@ -73,9 +72,21 @@
         return this.getFieldByCoordinate(x, y, type);
       }
     },
-    getPlayerInField: function($field) {
+    getPlayerInField: function($field, type, yetToAct) {
       var playerFound = null;
-      this.renderTargets.forEach(function(player){
+      var targets;
+
+      if (!type) {
+        targets = this.renderTargets;
+      }
+      else if (type === this.TYPE_PLAYER) {
+        targets = yetToAct ? this.playersToAct : this.players;
+      }
+      else {
+        targets = yetToAct ? this.enemiesToAct : this.enemiesToAct;
+      }
+
+      targets.forEach(function(player){
         if (player.$field && (player.$field.id === $field.id)) {
           playerFound = player;
         }
@@ -85,17 +96,25 @@
     },
     updateAi: function() {
       this.state = this.GAME_STATE_AI_BUSY;
-      this.enemies.forEach(function(enemy, index){
-        enemy.determineTarget();
-        (function (enemy) {
-          setTimeout(function(){
-            enemy.performMoveOrAttack();
-          }.bind(this), (index+1)*1000);
-          setTimeout(function(){
-            enemy.performMoveOrAttack();
-          }.bind(this), (index+1)*2000);
-        }(enemy));
-      }, this);
+      var yetToAct = this.enemiesToAct;
+      var enemy = yetToAct.shift();
+
+      if (!enemy) {
+        return this.endTurn();
+      }
+
+      enemy.determineTarget();
+      (function (enemy) {
+        setTimeout(function(){
+          this.state === this.GAME_STATE_AI_BUSY && enemy.determineAction();
+        }.bind(this), 1000);
+        setTimeout(function(){
+          this.state === this.GAME_STATE_AI_BUSY && enemy.determineAction();
+        }.bind(this), 2000);
+        setTimeout(function(){
+          this.state === this.GAME_STATE_AI_BUSY && enemy.determineAction();
+        }.bind(this), 3000);
+      }.bind(this)(enemy));
     },
     renderSelectAction: function() {
       setTimeout(function(){
@@ -106,6 +125,17 @@
     hideSelectAction: function() {
       $('.a').innerHTML = '';
       $('#m').appendChild($('.a'));
+    },
+    endTurn: function() {
+      if (!this.enemiesToAct.length && !this.playersToAct.length) {
+        console.log('--- END OF ROUND ---');
+        this.renderTargets.forEach(function(e){e.hasActed = false}, this);
+      }
+      else {
+        console.log('--- END OF TURN ---');
+      }
+      this.turn = (this.turn === this.TYPE_ENEMY) ? this.TYPE_PLAYER : this.TYPE_ENEMY;
+      this.state = this.GAME_STATE_SELECT_CHARACTER;
     }
   };
 
@@ -118,7 +148,7 @@
       if (state === this.GAME_STATE_SELECT_ACTION) {
         this.renderSelectAction();
       }
-      else {
+      else if (state !== this.GAME_STATE_SELECT_TARGET) {
         this.hideSelectAction();
       }
     }
@@ -132,8 +162,17 @@
       var $turn = $('.turn');
       var cl = $('html').classList;
       this._turn = turn;
+      if (turn === this.TYPE_ENEMY) {
+        $turn.innerText = 'Enemy';
+        cl.add('enemy');
+      }
+      else {
+        $turn.innerText = 'Player';
+        cl.remove('enemy');
+      }
       (turn === this.TYPE_ENEMY) ? (($turn.innerText = 'Enemy') && cl.add('enemy')) : (($turn.innerText = 'Player') && cl.remove('enemy'));
       $turn.innerText += ' Turn';
+      this.dirty = true;
     }
   });
 
@@ -149,6 +188,22 @@
     get: function() {
       return this.renderTargets.filter(function(tar){
         return tar.type === this.TYPE_PLAYER;
+      }, this);
+    }
+  });
+
+  Object.defineProperty(Stage.prototype, 'enemiesToAct', {
+    get: function() {
+      return this.renderTargets.filter(function(tar){
+        return tar.type === this.TYPE_ENEMY && !tar.hasActed;
+      }, this);
+    }
+  });
+
+  Object.defineProperty(Stage.prototype, 'playersToAct', {
+    get: function() {
+      return this.renderTargets.filter(function(tar){
+        return tar.type === this.TYPE_PLAYER && !tar.hasActed;
       }, this);
     }
   });

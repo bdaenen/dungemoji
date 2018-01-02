@@ -12,14 +12,17 @@
     // Mage
     this.addActor(createPlayer(this, 0, 5, "🧙🏻‍♂"));
     // Rogue
-    this.addActor(createPlayer(this, 2, 5, '🧝🏼'));
+    this.addActor(createPlayer(this, 0, 4, '🧝🏼'));
     // Warrior
-    this.addActor(createPlayer(this, 1, 3, '😡'));
+    this.addActor(createPlayer(this, 0, 3, '😡'));
 
     // Enemies
     this.addActor(create(this, 1, 2, 'Scorpion'));
-   // var spider = create(this, 0, 2, 'Spider');
-   // this.addActor(spider);
+    var spider = create(this, 0, 2, 'Spider');
+    this.addActor(spider);
+
+    this.turn = this.TYPE_PLAYER;
+    console.clear();
   };
 
   function createPlayer(stage, x, y, view) {

@@ -32,8 +32,12 @@
   gulp.task('html', ['css'], function () {
     setTimeout(function(){
       return gulp.src('./src/*.html')
-        .pipe(inline({compress:false}))
-        //.pipe(htmlmin({collapseWhitespace: true}))
+        .pipe(inline({compress:true}))
+        .pipe(htmlmin({
+          collapseWhitespace: true,
+          minifyCSS: true,
+          minifyJS: true
+        }))
         .pipe(gulp.dest(__dirname));
     }, 100);
   });
