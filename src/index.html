@@ -5,44 +5,76 @@
 <div id="m">
     <ul class="a">
     </ul>
-    <table id="e">
-        <tr id="e-b">
-            <td id="e-b-l"></td>
-            <td id="e-b-c"></td>
-            <td id="e-b-r"></td>
-        </tr>
-        <tr id="e-m">
-            <td id="e-m-l"></td>
-            <td id="e-m-c"></td>
-            <td id="e-m-r"></td>
-        </tr>
-        <tr id="e-f">
-            <td id="e-f-l"></td>
-            <td id="e-f-c"></td>
-            <td id="e-f-r"></td>
-        </tr>
-    </table>
-    <table id="p">
-        <tr id="p-f">
-            <td id="p-f-l"></td>
-            <td id="p-f-c"></td>
-            <td id="p-f-r"></td>
-        </tr>
-        <tr id="p-m">
-            <td id="p-m-l"></td>
-            <td id="p-m-c"></td>
-            <td id="p-m-r"></td>
-        </tr>
-        <tr id="p-b">
-            <td id="p-b-l"></td>
-            <td id="p-b-c"></td>
-            <td id="p-b-r"></td>
-        </tr>
-    </table>
+    <div class="c">
+        <table id="e">
+            <tr id="e-b">
+                <td id="e-b-l"></td>
+                <td id="e-b-c"></td>
+                <td id="e-b-r"></td>
+            </tr>
+            <tr id="e-m">
+                <td id="e-m-l"></td>
+                <td id="e-m-c"></td>
+                <td id="e-m-r"></td>
+            </tr>
+            <tr id="e-f">
+                <td id="e-f-l"></td>
+                <td id="e-f-c"></td>
+                <td id="e-f-r"></td>
+            </tr>
+        </table>
+        <table id="p">
+            <tr id="p-f">
+                <td id="p-f-l"></td>
+                <td id="p-f-c"></td>
+                <td id="p-f-r"></td>
+            </tr>
+            <tr id="p-m">
+                <td id="p-m-l"></td>
+                <td id="p-m-c"></td>
+                <td id="p-m-r"></td>
+            </tr>
+            <tr id="p-b">
+                <td id="p-b-l"></td>
+                <td id="p-b-c"></td>
+                <td id="p-b-r"></td>
+            </tr>
+        </table>
+        <div id="mm">
+            <ul>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li class="active"></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="c">
+    <div id="log"></div>
 </div>
 <div class="turn">Player Turn</div>
-<script>window.$ = document.querySelector.bind(document);window.$$ = document.querySelectorAll.bind(document);window.find = function(parent, searchTerm){return parent.querySelectorAll(searchTerm)};</script>
+<div class="i">
+    <div class="col">
+        <p>Turns are 1 character a time. Move and atk can occur in any order.</p>
+        <p>Click a character to select its action.</p>
+    </div>
+    <div class="col">
+        <p>Goal: Clear the frontal enemy row, then make the warrior push. Push the last lane to win.</p>
+    </div>
+    <div class="col">
+        <p><span class="r"></span>High HP, low atk. Can push enemy's lane. Low dodge chance.</p>
+        <p><span class="g"></span>Low HP, high atk. Can attack ranged or diagonal. High dodge chance.</p>
+        <p><span class="b"></span>Very low HP, avg atk. Can attack all in a row, ranged. Can't dodge.</p>
+    </div>
+</div>
+<script>var d=document,w=window;window.$ = d.querySelector.bind(d);w.$$ = d.querySelectorAll.bind(d);w.find = function(parent, searchTerm){return parent.querySelectorAll(searchTerm)};w.log=function(str){var n=$('#log');n.innerText+=[].join.call(arguments, ' ')+"\n";n.scrollTop = n.scrollHeight;};</script>
 <script inline src="js/Player.js"></script>
+<script inline src="js/Rogue.js"></script>
+<script inline src="js/Mage.js"></script>
+<script inline src="js/Warrior.js"></script>
 <script inline src="js/Enemy.js"></script>
 <script inline src="js/Scorpion.js"></script>
 <script inline src="js/Spider.js"></script>

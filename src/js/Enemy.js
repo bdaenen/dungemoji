@@ -8,10 +8,10 @@
     this.playerTarget = null;
   };
 
-  Enemy.prototype = Object.create(Player.prototype);
-  Enemy.prototype.constructor = Enemy;
+  var p = Object.create(Player.prototype);
+  p.constructor = Enemy;
 
-  Enemy.prototype.determineTarget = function() {
+  p.determineTarget = function() {
     this.playerTarget = null;
     this.stage.players.forEach(function(player){
       if (this.playerTarget) {
@@ -21,18 +21,18 @@
       if (this.inAttackRange(player)) {
         this.playerTarget = player;
       }
-      
+
     }, this);
 
     if (!this.playerTarget) {
       this.playerTarget = this.getClosest(this.stage.TYPE_PLAYER);
     }
 
-    console.log(this.view, "targets", this.playerTarget.view);
+    log(this.view, "targets", this.playerTarget.view);
     return this;
   };
 
-  Enemy.prototype.determineAction = function() {
+  p.determineAction = function() {
     if (!this.playerTarget || !this.playerTarget.alive) {
       this.determineTarget();
     }
@@ -74,5 +74,35 @@
     this.stage.state = this.stage.GAME_STATE_AI_BUSY;
   };
 
+  p.inAttackRange = function (target) {
+    var atk = this.actions.filter(function (o) {
+      return o.actionId === 'attack'
+    })[0];
+
+    return (Math.abs(target.position.y - this.position.y) <= atk.range) && (Math.abs(target.position.x - this.position.x) <= atk.rangeX);
+  };
+
+  p.getClosest = function(targetType) {
+    var closestDistance = 1/0;
+    var closestY = 1/0;
+    var closestTarget = null;
+    if (targetType === this.stage.TYPE_PLAYER) {
+      this.stage.players.forEach(function(player){
+        var xDistance = Math.abs(player.position.x - this.position.x);
+        var yDistance = Math.abs(player.position.y - this.position.y);
+        var distance = xDistance + yDistance;
+        // Give priority over Y distance.
+        if (yDistance < closestY || distance < closestDistance) {
+          closestDistance = distance;
+          closestY = yDistance;
+          closestTarget = player;
+        }
+      }, this);
+    }
+
+    return closestTarget;
+  };
+
+  Enemy.prototype = p;
   window.Enemy = Enemy;
 }());

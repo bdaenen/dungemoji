@@ -3,13 +3,35 @@
   padding: 0;
   color: #AAA;
 }
+html {
+  height: 100%;
+  background: #383838;
+}
 body {
   position: relative;
 }
-html {
-  height: 100%;
+.r,
+.g,
+.b {
+  width: 15px;
+  height: 15px;
+  margin-right: 10px;
+  display: inline-block;
 }
-table,
+.col {
+  width: 33%;
+  display: inline-block;
+}
+.r {
+  background: #B00;
+}
+.g {
+  background: #0B0;
+}
+.b {
+  background: #00B;
+}
+#m table,
 .emo,
 canvas {
   color: red;
@@ -17,24 +39,21 @@ canvas {
   margin: 0;
   font-family: 'Segoe Ui Emoji', sans-serif;
 }
-table {
+#m table {
   table-layout: fixed;
   margin: 0 auto;
   width: 960px;
-  height: 400px;
+  height: 360px;
   border: 5px solid green;
   text-align: center;
   border-collapse: collapse;
   background-color: #633f19;
 }
-.enemy table {
+.enemy #m table {
   border: 5px solid red;
 }
-table:first-of-type tr:last-child td {
+#m table:first-of-type tr:last-child td {
   border-bottom: 0;
-}
-#p tr:first-child td {
-  border-top: 0;
 }
 tr {
   width: 100%;
@@ -51,6 +70,9 @@ li {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+#p tr:first-child td {
+  border-top: 0;
 }
 .a {
   display: none;
@@ -125,4 +147,52 @@ td .a {
 }
 .noRange {
   filter: grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8);
+}
+#mm {
+  position: absolute;
+  top: 50%;
+  left: -20px;
+  transform: translate(-100%, -50%);
+  opacity: 1;
+}
+#mm ul {
+  width: 100%;
+  background: #633f19;
+  border-top: 5px solid red;
+  border-bottom: 5px solid green;
+}
+#mm li {
+  height: 40px;
+  width: 100px;
+  background: #633f19;
+  border: 4px solid #000;
+}
+#mm .active {
+  background: green;
+  position: relative;
+}
+#mm .active:before {
+  background: red;
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0.3;
+  transform: translateY(calc(-100% - 8px));
+}
+.c {
+  position: relative;
+  margin: 0 auto;
+  width: 960px;
+}
+#log {
+  overflow-y: scroll;
+  height: 150px;
+  width: 200px;
+  margin: 0 auto;
+  font-family: 'Segoe Ui Emoji', sans-serif;
+}
+#log::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
 }

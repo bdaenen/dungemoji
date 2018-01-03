@@ -128,14 +128,19 @@
     },
     endTurn: function() {
       if (!this.enemiesToAct.length && !this.playersToAct.length) {
-        console.log('--- END OF ROUND ---');
+        log('= end of round =');
         this.renderTargets.forEach(function(e){e.hasActed = false}, this);
       }
       else {
-        console.log('--- END OF TURN ---');
+        log('= end of turn =');
       }
       this.turn = (this.turn === this.TYPE_ENEMY) ? this.TYPE_PLAYER : this.TYPE_ENEMY;
       this.state = this.GAME_STATE_SELECT_CHARACTER;
+    },
+    playerPush: function() {
+      var mmp = find($('#mm'), '.active')[0];
+      mmp.classList.remove('active');
+      mmp.previousSibling.classList.add('active');
     }
   };
 

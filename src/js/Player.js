@@ -7,20 +7,22 @@
     this.str = 1;
     this.dex = 10;
     this.int = 10;
-    this._sta = 5;
+    this._sta = 6;
     this.maxHealth = this._sta;
     this._health = this._sta;
     this.type = stage.TYPE_PLAYER;
-    this.view = "👦🤵🏻";
+    this.view = "😡";
     this.$field = null;
     this.$view = null;
     this.currentAction = null;
     this.rotate = 0;
+    this.hueRotate = 0;
+    this.saturate = 100;
     this._hasAttacked = false;
     this._hasMoved = false;
     this._hasActed = false;
     this._alive = true;
-    this.actions = [
+    this._actions = [
       {
         actionId: 'move',
         view: '🏃',
@@ -56,10 +58,10 @@
       this.stage.dirty = true;
 
       if (!this.playerTarget) {
-        console.log(this.view, 'moves');
+        log(this.view, 'moves');
       }
       else {
-        console.log(this.view, 'moves towards', this.playerTarget.view);
+        log(this.view, 'moves towards', this.playerTarget.view);
       }
     },
     attack: function($field) {
@@ -68,14 +70,14 @@
       }
       var target = this.stage.getPlayerInField($field);
       var critmp = 1;
-      console.log(this.view, 'attacks', target.view);
+      log(this.view, 'attacks', target.view);
       if (Math.random() > target.dex/100) {
-        (Math.random() < this.dex/150) && (critmp = 2) && console.log('Critical hit!');
-        console.log(target.view, 'receives', (this.str * 2 * critmp), 'damage');
+        (Math.random() < this.dex/150) && (critmp = 2) && log('Critical hit!');
+        log(target.view, 'receives', (this.str * 2 * critmp), 'damage');
         target.health -= (this.str * 2 * critmp);
       }
       else {
-        console.log(target.view, 'dodged!');
+        log(target.view, 'dodged!');
         // Dodged
       }
     },
@@ -150,7 +152,7 @@
         y = this.position.y;
         f = [];
         for (i = 1; i <= action.range; i++) {
-          f = f.concat([ff(x + i, y), ff(x - i, y), ff(x, y + i), ff(x, y - i)]);
+          f = f.concat([ff(x, y + i), ff(x, y - i)]);
         }
         f = f.filter(function(o){return o});
       }
@@ -173,6 +175,7 @@
       viewElement.innerText = this.view;
       viewElement.classList.add('view');
       viewElement.style.transform = 'rotate(' + this.rotate + 'deg)';
+      viewElement.style.filter = 'hue-rotate('+this.hueRotate+'deg) saturate('+this.saturate+'%)';
       div.appendChild(viewElement);
 
       if (this.hasActed) {
@@ -189,7 +192,6 @@
         healthContainer.innerText += '❤';
       }
       this.$field.appendChild(healthContainer);
-
     },
     renderActions: function () {
       var b = document.createElement('b');
@@ -214,32 +216,8 @@
 
       return b.innerHTML;
     },
-    inAttackRange: function (target) {
-      var atk = this.actions.filter(function (o) {
-        return o.actionId === 'attack'
-      })[0];
-
-      return (Math.abs(target.position.y - this.position.y) <= atk.range) && (Math.abs(target.position.x - this.position.x) <= atk.rangeX);
-    },
-    getClosest: function(targetType) {
-      var closestDistance = Infinity;
-      var closestTarget = null;
-      if (targetType === this.stage.TYPE_PLAYER) {
-        var coords = [];
-
-        this.stage.players.forEach(function(player){
-          var distance = Math.abs(player.position.x - this.position.x) + Math.abs(player.position.y - this.position.y);
-          if (distance < closestDistance) {
-            closestDistance = distance;
-            closestTarget = player;
-          }
-        }, this);
-      }
-
-      return closestTarget;
-    },
     kill: function(){
-      console.log(this.view, 'was slain!');
+      log(this.view, 'was slain!');
       this._alive = false;
       this.stage.removeActor(this);
       this.stage = null;
@@ -335,6 +313,15 @@
   Object.defineProperty(Player.prototype, 'alive', {
     get: function() {
       return this._alive;
+    }
+  });
+
+  Object.defineProperty(Player.prototype, 'actions', {
+    get: function() {
+      return this._actions;
+    },
+    set: function(v){
+      this._actions = v;
     }
   });
 

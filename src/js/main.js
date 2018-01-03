@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  var currentStage = null;
+  var curStage = null;
   var canvas = document.createElement('canvas');
   var ctx = canvas.getContext('2d');
   canvas.width = canvas.height = 55;
@@ -9,15 +9,15 @@
   //$('body').appendChild(canvas);
   $('#m').style.backgroundImage = 'url("' + canvas.toDataURL() + '")';
   var stage1 = new Stage1();
-  currentStage = stage1;
+  curStage = stage1;
   stage1.init();
 
   var gameLoop = function() {
-    if (currentStage.turn === currentStage.TYPE_ENEMY && currentStage.state !== currentStage.GAME_STATE_AI_BUSY) {
-      currentStage.updateAi();
+    if (curStage.turn === curStage.TYPE_ENEMY && curStage.state !== curStage.GAME_STATE_AI_BUSY) {
+      curStage.updateAi();
     }
-    if (currentStage.dirty) {
-      currentStage.render();
+    if (curStage.dirty) {
+      curStage.render();
     }
     requestAnimationFrame(gameLoop);
   };
@@ -31,43 +31,48 @@
   });
 
   function clickCallback(e) {
-    if (currentStage.turn !== currentStage.TYPE_PLAYER) {
+    if (curStage.turn !== curStage.TYPE_PLAYER) {
       return;
     }
     var $field = e.target;
+    var clickedPlayer = curStage.getPlayerInField($field, curStage.TYPE_PLAYER, true);
+    var curSel = curStage.currentSelection;
 
-    if(currentStage.state === currentStage.GAME_STATE_SELECT_CHARACTER){
-      currentStage.currentSelection = currentStage.getPlayerInField($field, currentStage.TYPE_PLAYER, true);
-      if (currentStage.currentSelection) {
-        currentStage.state = currentStage.GAME_STATE_SELECT_ACTION;
+    if(curStage.state === curStage.GAME_STATE_SELECT_CHARACTER){
+      if (clickedPlayer) {
+        curStage.currentSelection = clickedPlayer;
+        curStage.state = curStage.GAME_STATE_SELECT_ACTION;
       }
     }
-    else if (currentStage.state === currentStage.GAME_STATE_SELECT_ACTION) {
+    else if (curStage.state === curStage.GAME_STATE_SELECT_ACTION) {
       var a;
       if (a = $field.dataset.actionId) {
-        currentStage.currentSelection.selectAction(a);
+        curSel.selectAction(a);
         e.stopPropagation();
       }
-      // Changing character
-      else if (!currentStage.currentSelection.hasMoved && !currentStage.currentSelection.hasAttacked && currentStage.getPlayerInField($field, currentStage.TYPE_PLAYER, true)) {
-        currentStage.currentSelection = currentStage.getPlayerInField($field, currentStage.TYPE_PLAYER, true);
-        currentStage.state = currentStage.GAME_STATE_SELECT_ACTION;
+      // Changing character is only possible on the initial action.
+      else if (!curSel.hasMoved && !curSel.hasAttacked && clickedPlayer) {
+        curStage.currentSelection = curStage.getPlayerInField($field, curStage.TYPE_PLAYER, true);
+        curStage.state = curStage.GAME_STATE_SELECT_ACTION;
       }
     }
-    else if (currentStage.state === currentStage.GAME_STATE_SELECT_TARGET) {
+    else if (curStage.state === curStage.GAME_STATE_SELECT_TARGET) {
       if ($field.classList.contains('valid')) {
-        currentStage.currentSelection.performSelectedAction(e.target);
-        if (!currentStage.currentSelection.hasMoved || !currentStage.currentSelection.hasAttacked) {
-          currentStage.state = currentStage.GAME_STATE_SELECT_ACTION;
+        curSel.performSelectedAction(e.target);
+        if (!curSel.hasMoved || !curSel.hasAttacked) {
+          curStage.state = curStage.GAME_STATE_SELECT_ACTION;
           clickCallback(e);
         }
-        else if (!currentStage.currentSelection.currentAction || currentStage.currentSelection.currentAction.actionId !== 'endTurn') {
-          currentStage.currentSelection.endTurn();
+        else if (!curSel.currentAction || curSel.currentAction.actionId !== 'endTurn') {
+          curSel.endTurn();
         }
       }
       // Changing action
       else if (a = $field.dataset.actionId) {
-        currentStage.currentSelection.selectAction(a);
+        curSel.selectAction(a);
+      }
+      else if (curStage.getPlayerInField($field, curStage.TYPE_PLAYER, true)) {
+
       }
     }
   }

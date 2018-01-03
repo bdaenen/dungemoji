@@ -5,32 +5,27 @@
     Stage.call(this);
   };
 
-  Stage1.prototype = Object.create(Stage.prototype);
-  Stage1.prototype.constructor = Stage1;
+  var p = Object.create(Stage.prototype);
+  p.constructor = Stage1;
 
-  Stage1.prototype.init = function(){
+  p.init = function(){
     // Mage
-    this.addActor(createPlayer(this, 0, 5, "🧙🏻‍♂"));
+    this.addActor(create(this, 0, 5, 'Mage'));
     // Rogue
-    this.addActor(createPlayer(this, 0, 4, '🧝🏼'));
+    this.addActor(create(this, 2, 4, 'Rogue'));
     // Warrior
-    this.addActor(createPlayer(this, 0, 3, '😡'));
+    this.addActor(create(this, 1, 3, 'Warrior'));
 
     // Enemies
-    this.addActor(create(this, 1, 2, 'Scorpion'));
-    var spider = create(this, 0, 2, 'Spider');
+    this.addActor(create(this, 1, 1, 'Scorpion'));
+    var spider = create(this, 0, 1, 'Spider');
     this.addActor(spider);
 
     this.turn = this.TYPE_PLAYER;
-    console.clear();
+    $('#log').innerText = '';
   };
 
-  function createPlayer(stage, x, y, view) {
-    var p = new Player(stage);
-    p.move(x, y);
-    p.view = view;
-    return p;
-  }
+  Stage1.prototype = p;
 
   function create(stage, x, y, cn){
     var p = new window[cn](stage);
