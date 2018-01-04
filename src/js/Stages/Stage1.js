@@ -21,7 +21,7 @@
     var spider = create(this, 0, 1, 'Spider');
     this.addActor(spider);
 
-    this.turn = this.TYPE_PLAYER;
+    this.turn = this.P;
     $('#log').innerText = '';
   };
 

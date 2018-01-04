@@ -21,9 +21,9 @@
     var y;
     var f;
 
-    ff = this.stage.getEnemyFieldByCoordinate.bind(this.stage);
-    x = this.position.x;
-    y = this.position.y;
+    ff = this.stage.eFByC.bind(this.stage);
+    x = this.pos.x;
+    y = this.pos.y;
     f = [
       ff(x+1,y+1),
       ff(x-1,y-1),

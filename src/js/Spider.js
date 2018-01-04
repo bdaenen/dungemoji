@@ -3,7 +3,7 @@
 
   var Spider = function(stage){
     Enemy.call(this, stage);
-    this.type = stage.TYPE_ENEMY;
+    this.type = stage.E;
     this.view = '🕷';
     this.rotate = 180;
     this.hueRotate = 120;

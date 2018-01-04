@@ -3,16 +3,16 @@
 
   var Enemy = function(stage){
     Player.call(this, stage);
-    this.type = stage.TYPE_ENEMY;
+    this.type = stage.E;
     this.view = '🦂';
-    this.playerTarget = null;
+    this.playerTarget = n;
   };
 
   var p = Object.create(Player.prototype);
   p.constructor = Enemy;
 
   p.determineTarget = function() {
-    this.playerTarget = null;
+    this.playerTarget = n;
     this.stage.players.forEach(function(player){
       if (this.playerTarget) {
         return;
@@ -25,7 +25,7 @@
     }, this);
 
     if (!this.playerTarget) {
-      this.playerTarget = this.getClosest(this.stage.TYPE_PLAYER);
+      this.playerTarget = this.getClosest(this.stage.P);
     }
 
     log(this.view, "targets", this.playerTarget.view);
@@ -41,20 +41,20 @@
       this.performSelectedAction(this.playerTarget.$field);
     }
     else if (!this.hasMoved) {
-      var x = this.position.x;
-      var y = this.position.y;
-      var deltaX = x - this.playerTarget.position.x;
+      var x = this.pos.x;
+      var y = this.pos.y;
+      var deltaX = x - this.playerTarget.pos.x;
       var deltaY = 2 - y;
-      var $field = null;
+      var $field = n;
 
       if (deltaY > 0) {
-        $field = this.stage.getEnemyFieldByCoordinate(x, y+1);
+        $field = this.stage.eFByC(x, y+1);
       }
       else if (deltaX > 0) {
-        $field = this.stage.getEnemyFieldByCoordinate(x-1, y);
+        $field = this.stage.eFByC(x-1, y);
       }
       else if (deltaX < 0) {
-        $field = this.stage.getEnemyFieldByCoordinate(x+1, y);
+        $field = this.stage.eFByC(x+1, y);
       }
 
       if ($field) {
@@ -71,7 +71,7 @@
       return;
     }
 
-    this.stage.state = this.stage.GAME_STATE_AI_BUSY;
+    this.stage.state = this.stage.S_AI;
   };
 
   p.inAttackRange = function (target) {
@@ -79,17 +79,17 @@
       return o.actionId === 'attack'
     })[0];
 
-    return (Math.abs(target.position.y - this.position.y) <= atk.range) && (Math.abs(target.position.x - this.position.x) <= atk.rangeX);
+    return (Math.abs(target.pos.y - this.pos.y) <= atk.range) && (Math.abs(target.pos.x - this.pos.x) <= atk.rangeX);
   };
 
   p.getClosest = function(targetType) {
     var closestDistance = 1/0;
     var closestY = 1/0;
-    var closestTarget = null;
-    if (targetType === this.stage.TYPE_PLAYER) {
+    var closestTarget = n;
+    if (targetType === this.stage.P) {
       this.stage.players.forEach(function(player){
-        var xDistance = Math.abs(player.position.x - this.position.x);
-        var yDistance = Math.abs(player.position.y - this.position.y);
+        var xDistance = Math.abs(player.pos.x - this.pos.x);
+        var yDistance = Math.abs(player.pos.y - this.pos.y);
         var distance = xDistance + yDistance;
         // Give priority over Y distance.
         if (yDistance < closestY || distance < closestDistance) {

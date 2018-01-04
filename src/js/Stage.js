@@ -4,19 +4,19 @@
   var Stage = function(){
     this.renderTargets = [];
     this.dirty = false;
-    this._state = this.GAME_STATE_SELECT_CHARACTER;
+    this._state = this.S_CHAR;
     this._turn = '';
-    this.turn = this.TYPE_PLAYER;
-    this.currentSelection = null;
+    this.turn = this.P;
+    this.currentSelection = n;
   };
 
   Stage.prototype = {
-    GAME_STATE_SELECT_CHARACTER: 1,
-    GAME_STATE_SELECT_ACTION: 2,
-    GAME_STATE_SELECT_TARGET: 3,
-    GAME_STATE_AI_BUSY: 4,
-    TYPE_PLAYER: 1,
-    TYPE_ENEMY: 2,
+    S_CHAR: 1,
+    S_ACT: 2,
+    S_TAR: 3,
+    S_AI: 4,
+    P: 1,
+    E: 2,
     init: function(){},
     addActor: function(player){
       this.renderTargets.push(player);
@@ -37,7 +37,7 @@
 
       // Render the stage
       this.renderTargets.forEach(function(item){
-        var $field = this.getFieldByCoordinate(item.position.x, item.position.y);
+        var $field = this.fByC(item.pos.x, item.pos.y);
         item.render($field);
       }, this);
       this.dirty = false;
@@ -48,7 +48,7 @@
      * @param [type=FIELD_TYPE_STAGE]
      * @returns {*}
      */
-    getFieldByCoordinate: function(x, y, type) {
+    fByC: function(x, y, type) {
       switch (type) {
         case FIELD_TYPE_ENEMY:
           return mappedEnemyFields[y] && mappedEnemyFields[y][x];
@@ -62,24 +62,24 @@
           break;
       }
     },
-    getPlayerFieldByCoordinate: function(x, y, type) {
+    pFByC: function(x, y, type) {
       if (y > 2) {
-        return this.getFieldByCoordinate(x, y, type);
+        return this.fByC(x, y, type);
       }
     },
-    getEnemyFieldByCoordinate: function(x, y, type) {
+    eFByC: function(x, y, type) {
       if (y <= 2) {
-        return this.getFieldByCoordinate(x, y, type);
+        return this.fByC(x, y, type);
       }
     },
-    getPlayerInField: function($field, type, yetToAct) {
-      var playerFound = null;
+    pInF: function($field, type, yetToAct) {
+      var playerFound = n;
       var targets;
 
       if (!type) {
         targets = this.renderTargets;
       }
-      else if (type === this.TYPE_PLAYER) {
+      else if (type === this.P) {
         targets = yetToAct ? this.playersToAct : this.players;
       }
       else {
@@ -95,7 +95,7 @@
       return playerFound;
     },
     updateAi: function() {
-      this.state = this.GAME_STATE_AI_BUSY;
+      this.state = this.S_AI;
       var yetToAct = this.enemiesToAct;
       var enemy = yetToAct.shift();
 
@@ -106,13 +106,13 @@
       enemy.determineTarget();
       (function (enemy) {
         setTimeout(function(){
-          this.state === this.GAME_STATE_AI_BUSY && enemy.determineAction();
+          this.state === this.S_AI && enemy.determineAction();
         }.bind(this), 1000);
         setTimeout(function(){
-          this.state === this.GAME_STATE_AI_BUSY && enemy.determineAction();
+          this.state === this.S_AI && enemy.determineAction();
         }.bind(this), 2000);
         setTimeout(function(){
-          this.state === this.GAME_STATE_AI_BUSY && enemy.determineAction();
+          this.state === this.S_AI && enemy.determineAction();
         }.bind(this), 3000);
       }.bind(this)(enemy));
     },
@@ -134,8 +134,8 @@
       else {
         log('= end of turn =');
       }
-      this.turn = (this.turn === this.TYPE_ENEMY) ? this.TYPE_PLAYER : this.TYPE_ENEMY;
-      this.state = this.GAME_STATE_SELECT_CHARACTER;
+      this.turn = (this.turn === this.E) ? this.P : this.E;
+      this.state = this.S_CHAR;
     },
     playerPush: function() {
       var mmp = find($('#mm'), '.active')[0];
@@ -144,22 +144,22 @@
     }
   };
 
-  Object.defineProperty(Stage.prototype, 'state', {
+  dp(Stage.prototype, 'state', {
     get: function(){
       return this._state;
     },
     set: function(state) {
       this._state = state;
-      if (state === this.GAME_STATE_SELECT_ACTION) {
+      if (state === this.S_ACT) {
         this.renderSelectAction();
       }
-      else if (state !== this.GAME_STATE_SELECT_TARGET) {
+      else if (state !== this.S_TAR) {
         this.hideSelectAction();
       }
     }
   });
 
-  Object.defineProperty(Stage.prototype, 'turn', {
+  dp(Stage.prototype, 'turn', {
     get: function(){
       return this._turn;
     },
@@ -167,7 +167,7 @@
       var $turn = $('.turn');
       var cl = $('html').classList;
       this._turn = turn;
-      if (turn === this.TYPE_ENEMY) {
+      if (turn === this.E) {
         $turn.innerText = 'Enemy';
         cl.add('enemy');
       }
@@ -175,40 +175,40 @@
         $turn.innerText = 'Player';
         cl.remove('enemy');
       }
-      (turn === this.TYPE_ENEMY) ? (($turn.innerText = 'Enemy') && cl.add('enemy')) : (($turn.innerText = 'Player') && cl.remove('enemy'));
+      (turn === this.E) ? (($turn.innerText = 'Enemy') && cl.add('enemy')) : (($turn.innerText = 'Player') && cl.remove('enemy'));
       $turn.innerText += ' Turn';
       this.dirty = true;
     }
   });
 
-  Object.defineProperty(Stage.prototype, 'enemies', {
+  dp(Stage.prototype, 'enemies', {
     get: function() {
       return this.renderTargets.filter(function(tar){
-        return tar.type === this.TYPE_ENEMY;
+        return tar.type === this.E;
       }, this);
     }
   });
 
-  Object.defineProperty(Stage.prototype, 'players', {
+  dp(Stage.prototype, 'players', {
     get: function() {
       return this.renderTargets.filter(function(tar){
-        return tar.type === this.TYPE_PLAYER;
+        return tar.type === this.P;
       }, this);
     }
   });
 
-  Object.defineProperty(Stage.prototype, 'enemiesToAct', {
+  dp(Stage.prototype, 'enemiesToAct', {
     get: function() {
       return this.renderTargets.filter(function(tar){
-        return tar.type === this.TYPE_ENEMY && !tar.hasActed;
+        return tar.type === this.E && !tar.hasActed;
       }, this);
     }
   });
 
-  Object.defineProperty(Stage.prototype, 'playersToAct', {
+  dp(Stage.prototype, 'playersToAct', {
     get: function() {
       return this.renderTargets.filter(function(tar){
-        return tar.type === this.TYPE_PLAYER && !tar.hasActed;
+        return tar.type === this.P && !tar.hasActed;
       }, this);
     }
   });

@@ -2,44 +2,45 @@
   'use strict';
 
   var Player = function(stage){
-    this.stage = stage;
-    this.position = {x:0,y:0};
-    this.str = 1;
-    this.dex = 10;
-    this.int = 10;
-    this._sta = 6;
-    this.maxHealth = this._sta;
-    this._health = this._sta;
-    this.type = stage.TYPE_PLAYER;
-    this.view = "😡";
-    this.$field = null;
-    this.$view = null;
-    this.currentAction = null;
-    this.rotate = 0;
-    this.hueRotate = 0;
-    this.saturate = 100;
-    this._hasAttacked = false;
-    this._hasMoved = false;
-    this._hasActed = false;
-    this._alive = true;
-    this._actions = [
+    var t = this;
+    t.stage = stage;
+    t.pos = {x:0,y:0};
+    t.str = 1;
+    t.dex = 10;
+    t.int = 10;
+    t._sta = 6;
+    t.maxHealth = this._sta;
+    t._health = this._sta;
+    t.type = stage.P;
+    t.view = "😡";
+    t.$field = n;
+    t.$view = n;
+    t.curAction = n;
+    t.rotate = 0;
+    t.hueRotate = 0;
+    t.saturate = 100;
+    t._hasAttacked = false;
+    t._hasMoved = false;
+    t._hasActed = false;
+    t._alive = true;
+    t._actions = [
       {
         actionId: 'move',
         view: '🏃',
         range: 1,
-        type: stage.TYPE_PLAYER
+        type: stage.P
       },
       {
         actionId: 'attack',
         view: '🗡',
         range: 1,
         rangeX: 0,
-        type: stage.TYPE_ENEMY
+        type: stage.E
       },
       {
         actionId: 'endTurn',
         view: '🔚',
-        type: stage.TYPE_PLAYER
+        type: stage.P
       }
     ];
   };
@@ -49,12 +50,12 @@
       if (x instanceof Node) {
         return this.move(+x.dataset.x, +x.dataset.y);
       }
-      if (this.stage.getPlayerInField(this.stage.getFieldByCoordinate(x, y))) {
+      if (this.stage.pInF(this.stage.fByC(x, y))) {
         console.warn('cant move to occupied field');
         return false;
       }
-      this.position.x = x;
-      this.position.y = y;
+      this.pos.x = x;
+      this.pos.y = y;
       this.stage.dirty = true;
 
       if (!this.playerTarget) {
@@ -68,7 +69,7 @@
       if (!$field) {
         return;
       }
-      var target = this.stage.getPlayerInField($field);
+      var target = this.stage.pInF($field);
       var critmp = 1;
       log(this.view, 'attacks', target.view);
       if (Math.random() > target.dex/100) {
@@ -82,31 +83,34 @@
       }
     },
     selectAction: function(actionId) {
-      this.currentAction = this.actions.filter(function(o){return o.actionId === actionId})[0];
+      var t = this;
+      this.curAction = this.actions.filter(function(o){return o.actionId === actionId})[0];
 
-      if (this.currentAction.range) {
-        this.hideValidActionTargets();
-        this.renderValidActionTargets(this.currentAction);
-        this.stage.state = this.stage.GAME_STATE_SELECT_TARGET;
+      if (t.curAction.range) {
+        t.hideValidActionTargets();
+        t.renderValidActionTargets(this.curAction);
+        t.stage.state = t.stage.S_TAR;
       }
       else {
-        this.performSelectedAction();
+        t.performSelectedAction();
       }
     },
     performSelectedAction: function($field) {
-      this.stage.hideSelectAction();
-      this[this.currentAction.actionId]($field);
-      if (this.currentAction.actionId === 'move') {
-        this.hasMoved = true;
+      var t = this;
+      var a = t.curAction.actionId;
+      t.stage.hideSelectAction();
+      t[a]($field);
+      if (a === 'move') {
+        t.hasMoved = true;
       }
-      else if (this.currentAction.actionId === 'attack') {
-        this.hasAttacked = true;
+      else if (a === 'attack') {
+        t.hasAttacked = true;
       }
-      else if (this.currentAction.actionId === 'endTurn') {
-        this.endTurn();
+      else if (a === 'endTurn') {
+        t.endTurn();
       }
-      this.hideValidActionTargets();
-      this.stage.dirty = true;
+      t.hideValidActionTargets();
+      t.stage.dirty = true;
     },
     endTurn: function() {
       // Only a player can end player turns, only enemy can end enemy turns.
@@ -116,21 +120,22 @@
       }
     },
     getValidActionTargets: function(action) {
+      var t = this;
       var ff;
       var x;
       var y;
       var f;
       var i;
 
-      if (action.type === this.stage.TYPE_PLAYER) {
-        if (this.type === this.stage.TYPE_PLAYER) {
-          ff = this.stage.getPlayerFieldByCoordinate.bind(this.stage);
+      if (action.type === t.stage.P) {
+        if (t.type === t.stage.P) {
+          ff = t.stage.pFByC.bind(t.stage);
         }
         else {
-          ff = this.stage.getEnemyFieldByCoordinate.bind(this.stage);
+          ff = t.stage.eFByC.bind(t.stage);
         }
-        x = this.position.x;
-        y = this.position.y;
+        x = t.pos.x;
+        y = t.pos.y;
         f = [];
         for (i = 1; i <= action.range; i++) {
           f = f.concat([ff(x + i, y), ff(x - i, y), ff(x, y + i), ff(x, y - i)]);
@@ -141,15 +146,15 @@
           return (o && !(find(o, '.view').length))
         });
       }
-      if (action.type === this.stage.TYPE_ENEMY) {
-        if (this.type === this.stage.TYPE_PLAYER) {
-          ff = this.stage.getEnemyFieldByCoordinate.bind(this.stage);
+      if (action.type === t.stage.E) {
+        if (t.type === t.stage.P) {
+          ff = t.stage.eFByC.bind(t.stage);
         }
         else {
-          ff = this.stage.getPlayerFieldByCoordinate.bind(this.stage);
+          ff = t.stage.pFByC.bind(t.stage);
         }
-        x = this.position.x;
-        y = this.position.y;
+        x = t.pos.x;
+        y = t.pos.y;
         f = [];
         for (i = 1; i <= action.range; i++) {
           f = f.concat([ff(x, y + i), ff(x, y - i)]);
@@ -171,40 +176,42 @@
       $$('.valid').forEach(function(n){n.classList.remove('valid')});
     },
     render: function(div) {
+      var t = this;
       var viewElement = document.createElement('div');
-      viewElement.innerText = this.view;
+      viewElement.innerText = t.view;
       viewElement.classList.add('view');
-      viewElement.style.transform = 'rotate(' + this.rotate + 'deg)';
-      viewElement.style.filter = 'hue-rotate('+this.hueRotate+'deg) saturate('+this.saturate+'%)';
+      viewElement.style.transform = 'rotate(' + t.rotate + 'deg)';
+      viewElement.style.filter = 'hue-rotate('+t.hueRotate+'deg) saturate('+t.saturate+'%)';
       div.appendChild(viewElement);
 
-      if (this.hasActed) {
+      if (t.hasActed) {
         viewElement.classList.add('hasActed');
       }
 
-      this.$view = viewElement;
-      this.$field = div;
+      t.$view = viewElement;
+      t.$field = div;
 
       var healthContainer = document.createElement('div');
       healthContainer.classList.add('health');
 
-      for (var i = this.health; i > 0; i--) {
+      for (var i = t.health; i > 0; i--) {
         healthContainer.innerText += '❤';
       }
-      this.$field.appendChild(healthContainer);
+      t.$field.appendChild(healthContainer);
     },
     renderActions: function () {
+      var t = this;
       var b = document.createElement('b');
-      this.actions.forEach(function(action) {
+      t.actions.forEach(function(action) {
         var $n = document.createElement('li');
-        if ((action.actionId === 'move') && this.hasMoved) {
+        if ((action.actionId === 'move') && t.hasMoved) {
           return;
         }
-        else if ((action.actionId === 'attack') && this.hasAttacked) {
+        else if ((action.actionId === 'attack') && t.hasAttacked) {
           return;
         }
 
-        var targets = this.getValidActionTargets(action);
+        var targets = t.getValidActionTargets(action);
         if (action.actionId !== 'endTurn' && (!targets || !targets.length)) {
           $n.classList.add('noRange');
         }
@@ -212,58 +219,61 @@
         $n.innerText = action.view;
         $n.dataset.actionId = action.actionId;
         b.appendChild($n);
-      }, this);
+      }, t);
 
       return b.innerHTML;
     },
     kill: function(){
-      log(this.view, 'was slain!');
-      this._alive = false;
-      this.stage.removeActor(this);
-      this.stage = null;
-      this.position = null;
-      this.str = null;
-      this.dex = null;
-      this.int = null;
-      this._sta = null;
-      this.maxHealth = null;
-      this._health = null;
-      this.type = null;
-      this.view = null;
-      this.$field = null;
-      this.$view = null;
-      this.currentAction = null;
-      this.rotate = null;
-      this._hasAttacked = null;
-      this._hasMoved = null;
-      this._hasActed = null;
-      this.actions = null;
+      var t = this;
+      log(t.view, 'was slain!');
+      t._alive = false;
+      t.stage.removeActor(t);
+      t.stage = n;
+      t.pos = n;
+      t.str = n;
+      t.dex = n;
+      t.int = n;
+      t._sta = n;
+      t.maxHealth = n;
+      t._health = n;
+      t.type = n;
+      t.view = n;
+      t.$field = n;
+      t.$view = n;
+      t.curAction = n;
+      t.rotate = n;
+      t._hasAttacked = n;
+      t._hasMoved = n;
+      t._hasActed = n;
+      t.actions = n;
     }
   };
 
-  Object.defineProperty(Player.prototype, 'sta', {
+  dp(Player.prototype, 'sta', {
     get: function() {
       return this._sta;
     },
     set: function(sta) {
-      this._sta = sta;
-      this.maxHealth = this._sta;
-      this.health > this.maxHealth && (this.health = this.maxHealth);
+      var t = this;
+      t._sta = sta;
+      t.maxHealth = t._sta;
+      t.health > t.maxHealth && (t.health = t.maxHealth);
     }
   });
 
-  Object.defineProperty(Player.prototype, 'health', {
+  dp(Player.prototype, 'health', {
     get: function() {
       return this._health;
     },
     set: function(val) {
-      this._health = val;
-      this.health > this.maxHealth && (this._health = this.maxHealth);
-      this.health <= 0 && this.kill();
+      var t = this;
+      t._health = val;
+      t.health > t.maxHealth && (t._health = t.maxHealth);
+      t.health <= 0 && t.kill();
     }
   });
 
-  Object.defineProperty(Player.prototype, 'hasActed', {
+  dp(Player.prototype, 'hasActed', {
     get: function() {
       return this._hasActed;
     },
@@ -274,49 +284,51 @@
     }
   });
 
-  Object.defineProperty(Player.prototype, 'hasMoved', {
+  dp(Player.prototype, 'hasMoved', {
     get: function() {
       return this._hasMoved;
     },
     set: function(val) {
-      if (val === this._hasMoved) {
+      var t = this;
+      if (val === t._hasMoved) {
         return;
       }
-      this._hasMoved = val;
-      if (this._hasMoved && this._hasAttacked && !this.hasActed) {
-        this.hasActed = true;
+      t._hasMoved = val;
+      if (t._hasMoved && t._hasAttacked && !t.hasActed) {
+        t.hasActed = true;
       }
       else if (!val) {
-        this._hasActed = false;
+        t._hasActed = false;
       }
     }
   });
 
-  Object.defineProperty(Player.prototype, 'hasAttacked', {
+  dp(Player.prototype, 'hasAttacked', {
     get: function() {
       return this._hasAttacked;
     },
     set: function(val) {
-      if (val === this._hasAttacked) {
+      var t = this;
+      if (val === t._hasAttacked) {
         return;
       }
-      this._hasAttacked = val;
-      if (this._hasMoved && this._hasAttacked && !this.hasActed) {
-        this.hasActed = true;
+      t._hasAttacked = val;
+      if (t._hasMoved && t._hasAttacked && !t.hasActed) {
+        t.hasActed = true;
       }
       else if (!val) {
-        this._hasActed = false;
+        t._hasActed = false;
       }
     }
   });
 
-  Object.defineProperty(Player.prototype, 'alive', {
+  dp(Player.prototype, 'alive', {
     get: function() {
       return this._alive;
     }
   });
 
-  Object.defineProperty(Player.prototype, 'actions', {
+  dp(Player.prototype, 'actions', {
     get: function() {
       return this._actions;
     },

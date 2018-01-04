@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  var curStage = null;
+  var curStage = n;
   var canvas = document.createElement('canvas');
   var ctx = canvas.getContext('2d');
   canvas.width = canvas.height = 55;
@@ -13,7 +13,7 @@
   stage1.init();
 
   var gameLoop = function() {
-    if (curStage.turn === curStage.TYPE_ENEMY && curStage.state !== curStage.GAME_STATE_AI_BUSY) {
+    if (curStage.turn === curStage.E && curStage.state !== curStage.S_AI) {
       curStage.updateAi();
     }
     if (curStage.dirty) {
@@ -31,20 +31,20 @@
   });
 
   function clickCallback(e) {
-    if (curStage.turn !== curStage.TYPE_PLAYER) {
+    if (curStage.turn !== curStage.P) {
       return;
     }
     var $field = e.target;
-    var clickedPlayer = curStage.getPlayerInField($field, curStage.TYPE_PLAYER, true);
+    var clickedPlayer = curStage.pInF($field, curStage.P, true);
     var curSel = curStage.currentSelection;
 
-    if(curStage.state === curStage.GAME_STATE_SELECT_CHARACTER){
+    if(curStage.state === curStage.S_CHAR){
       if (clickedPlayer) {
         curStage.currentSelection = clickedPlayer;
-        curStage.state = curStage.GAME_STATE_SELECT_ACTION;
+        curStage.state = curStage.S_ACT;
       }
     }
-    else if (curStage.state === curStage.GAME_STATE_SELECT_ACTION) {
+    else if (curStage.state === curStage.S_ACT) {
       var a;
       if (a = $field.dataset.actionId) {
         curSel.selectAction(a);
@@ -52,18 +52,18 @@
       }
       // Changing character is only possible on the initial action.
       else if (!curSel.hasMoved && !curSel.hasAttacked && clickedPlayer) {
-        curStage.currentSelection = curStage.getPlayerInField($field, curStage.TYPE_PLAYER, true);
-        curStage.state = curStage.GAME_STATE_SELECT_ACTION;
+        curStage.currentSelection = curStage.pInF($field, curStage.P, true);
+        curStage.state = curStage.S_ACT;
       }
     }
-    else if (curStage.state === curStage.GAME_STATE_SELECT_TARGET) {
+    else if (curStage.state === curStage.S_TAR) {
       if ($field.classList.contains('valid')) {
         curSel.performSelectedAction(e.target);
         if (!curSel.hasMoved || !curSel.hasAttacked) {
-          curStage.state = curStage.GAME_STATE_SELECT_ACTION;
+          curStage.state = curStage.S_ACT;
           clickCallback(e);
         }
-        else if (!curSel.currentAction || curSel.currentAction.actionId !== 'endTurn') {
+        else if (!curSel.curAction || curSel.curAction.actionId !== 'endTurn') {
           curSel.endTurn();
         }
       }
@@ -71,7 +71,7 @@
       else if (a = $field.dataset.actionId) {
         curSel.selectAction(a);
       }
-      else if (curStage.getPlayerInField($field, curStage.TYPE_PLAYER, true)) {
+      else if (curStage.pInF($field, curStage.P, true)) {
 
       }
     }

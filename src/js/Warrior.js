@@ -14,11 +14,11 @@
     this.endTurn();
   };
 
-  Object.defineProperty(p, 'actions', {
+  dp(p, 'actions', {
     get: function(){
-      var fp = this.stage.getPlayerInField.bind(this.stage);
-      var ff = this.stage.getFieldByCoordinate.bind(this.stage);
-      if (this.position.y !== 3 || fp(ff(0, 2)) || fp(ff(1,2)) || fp(2,2)) {
+      var fp = this.stage.pInF.bind(this.stage);
+      var ff = this.stage.fByC.bind(this.stage);
+      if (this.pos.y !== 3 || fp(ff(0, 2)) || fp(ff(1,2)) || fp(2,2)) {
         return this._actions;
       }
       else {
