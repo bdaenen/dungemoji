@@ -7,7 +7,9 @@
     this._state = this.S_CHAR;
     this._turn = '';
     this.turn = this.P;
-    this.currentSelection = n;
+    this.currentSelection = null;
+    this.rows = 8;
+    this.activeRow = Math.floor(this.rows/2);
   };
 
   Stage.prototype = {
@@ -32,14 +34,32 @@
       mappedStage.forEach(function(row){
         row.forEach(function(col) {
           col.innerText = '';
-        });
-      });
+          if (((+col.dataset.y) < 3-this.activeRow) || ((+col.dataset.y) > (this.rows - this.activeRow+2))) {
+            col.classList.add('wall');
+            col.parentNode.classList.add('wall');
+          }
+          else {
+            col.classList.remove('wall');
+            col.parentNode.classList.remove('wall');
+          }
+        }, this);
+      }, this);
 
       // Render the stage
       this.renderTargets.forEach(function(item){
-        var $field = this.fByC(item.pos.x, item.pos.y);
+        var $field = this.fieldByCoord(item.pos.x, item.pos.y);
         item.render($field);
       }, this);
+
+      var $mmul = $('#mmul');
+      $mmul.innerHTML = '';
+      for (var i = 0; i < this.rows; i++) {
+        $mmul.appendChild(document.createElement('li'));
+      }
+      var rows = $$('#mm li');
+      rows.forEach(function(row){row.classList.remove('active')});
+      rows[this.activeRow].classList.add('active');
+
       this.dirty = false;
     },
     /**
@@ -48,7 +68,7 @@
      * @param [type=FIELD_TYPE_STAGE]
      * @returns {*}
      */
-    fByC: function(x, y, type) {
+    fieldByCoord: function(x, y, type) {
       switch (type) {
         case FIELD_TYPE_ENEMY:
           return mappedEnemyFields[y] && mappedEnemyFields[y][x];
@@ -62,18 +82,18 @@
           break;
       }
     },
-    pFByC: function(x, y, type) {
+    playerFieldByCoord: function(x, y, type) {
       if (y > 2) {
-        return this.fByC(x, y, type);
+        return this.fieldByCoord(x, y, type);
       }
     },
-    eFByC: function(x, y, type) {
+    enemyFieldByCoord: function(x, y, type) {
       if (y <= 2) {
-        return this.fByC(x, y, type);
+        return this.fieldByCoord(x, y, type);
       }
     },
-    pInF: function($field, type, yetToAct) {
-      var playerFound = n;
+    playerInField: function($field, type, yetToAct) {
+      var playerFound = null;
       var targets;
 
       if (!type) {
@@ -138,13 +158,22 @@
       this.state = this.S_CHAR;
     },
     playerPush: function() {
-      var mmp = find($('#mm'), '.active')[0];
-      mmp.classList.remove('active');
-      mmp.previousSibling.classList.add('active');
+      this.activeRow--;
+      this.enemies.forEach(function(enemy){
+        if (enemy.pos.y < 2) {
+          enemy.pos.y++;
+        }
+      });
+    },
+    enemyPush: function() {
+      this.activeRow++;
+      this.players.forEach(function(player){
+        player.pos.y > 3 && (player.pos.y--);
+      });
     }
   };
 
-  dp(Stage.prototype, 'state', {
+  Object.defineProperty(Stage.prototype, 'state', {
     get: function(){
       return this._state;
     },
@@ -159,7 +188,7 @@
     }
   });
 
-  dp(Stage.prototype, 'turn', {
+  Object.defineProperty(Stage.prototype, 'turn', {
     get: function(){
       return this._turn;
     },
@@ -181,7 +210,7 @@
     }
   });
 
-  dp(Stage.prototype, 'enemies', {
+  Object.defineProperty(Stage.prototype, 'enemies', {
     get: function() {
       return this.renderTargets.filter(function(tar){
         return tar.type === this.E;
@@ -189,7 +218,7 @@
     }
   });
 
-  dp(Stage.prototype, 'players', {
+  Object.defineProperty(Stage.prototype, 'players', {
     get: function() {
       return this.renderTargets.filter(function(tar){
         return tar.type === this.P;
@@ -197,7 +226,7 @@
     }
   });
 
-  dp(Stage.prototype, 'enemiesToAct', {
+  Object.defineProperty(Stage.prototype, 'enemiesToAct', {
     get: function() {
       return this.renderTargets.filter(function(tar){
         return tar.type === this.E && !tar.hasActed;
@@ -205,7 +234,7 @@
     }
   });
 
-  dp(Stage.prototype, 'playersToAct', {
+  Object.defineProperty(Stage.prototype, 'playersToAct', {
     get: function() {
       return this.renderTargets.filter(function(tar){
         return tar.type === this.P && !tar.hasActed;

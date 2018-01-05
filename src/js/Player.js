@@ -8,17 +8,18 @@
     t.str = 1;
     t.dex = 10;
     t.int = 10;
-    t._sta = 6;
+    t._sta = 5;
     t.maxHealth = this._sta;
     t._health = this._sta;
     t.type = stage.P;
     t.view = "😡";
-    t.$field = n;
-    t.$view = n;
-    t.curAction = n;
+    t.$field = null;
+    t.$view = null;
+    t.curAction = null;
     t.rotate = 0;
     t.hueRotate = 0;
     t.saturate = 100;
+    t.contrast = 100;
     t._hasAttacked = false;
     t._hasMoved = false;
     t._hasActed = false;
@@ -50,8 +51,9 @@
       if (x instanceof Node) {
         return this.move(+x.dataset.x, +x.dataset.y);
       }
-      if (this.stage.pInF(this.stage.fByC(x, y))) {
-        console.warn('cant move to occupied field');
+      var $field = this.stage.fieldByCoord(x, y);
+      if (this.stage.playerInField($field) || $field.classList.contains('wall')) {
+        console.warn('cant move to occupied or walled field');
         return false;
       }
       this.pos.x = x;
@@ -69,13 +71,13 @@
       if (!$field) {
         return;
       }
-      var target = this.stage.pInF($field);
+      var target = this.stage.playerInField($field);
       var critmp = 1;
       log(this.view, 'attacks', target.view);
       if (Math.random() > target.dex/100) {
-        (Math.random() < this.dex/150) && (critmp = 2) && log('Critical hit!');
-        log(target.view, 'receives', (this.str * 2 * critmp), 'damage');
-        target.health -= (this.str * 2 * critmp);
+        (Math.random() < this.dex/150) && (critmp = 1.5) && log('Critical hit!');
+        log(target.view, 'receives', (this.str * critmp), 'damage');
+        target.health -= (this.str * critmp);
       }
       else {
         log(target.view, 'dodged!');
@@ -120,22 +122,21 @@
       }
     },
     getValidActionTargets: function(action) {
-      var t = this;
       var ff;
       var x;
       var y;
       var f;
       var i;
 
-      if (action.type === t.stage.P) {
-        if (t.type === t.stage.P) {
-          ff = t.stage.pFByC.bind(t.stage);
+      if (action.type === this.stage.P) {
+        if (this.type === this.stage.P) {
+          ff = this.stage.playerFieldByCoord.bind(this.stage);
         }
         else {
-          ff = t.stage.eFByC.bind(t.stage);
+          ff = this.stage.enemyFieldByCoord.bind(this.stage);
         }
-        x = t.pos.x;
-        y = t.pos.y;
+        x = this.pos.x;
+        y = this.pos.y;
         f = [];
         for (i = 1; i <= action.range; i++) {
           f = f.concat([ff(x + i, y), ff(x - i, y), ff(x, y + i), ff(x, y - i)]);
@@ -143,18 +144,18 @@
 
         // Filter out undefined nodes and occupied nodes.
         f = f.filter(function (o) {
-          return (o && !(find(o, '.view').length))
+          return (o && !(find(o, '.view').length) && !(o.classList.contains('wall')))
         });
       }
-      if (action.type === t.stage.E) {
-        if (t.type === t.stage.P) {
-          ff = t.stage.eFByC.bind(t.stage);
+      if (action.type === this.stage.E) {
+        if (this.type === this.stage.P) {
+          ff = this.stage.enemyFieldByCoord.bind(this.stage);
         }
         else {
-          ff = t.stage.pFByC.bind(t.stage);
+          ff = this.stage.playerFieldByCoord.bind(this.stage);
         }
-        x = t.pos.x;
-        y = t.pos.y;
+        x = this.pos.x;
+        y = this.pos.y;
         f = [];
         for (i = 1; i <= action.range; i++) {
           f = f.concat([ff(x, y + i), ff(x, y - i)]);
@@ -181,7 +182,7 @@
       viewElement.innerText = t.view;
       viewElement.classList.add('view');
       viewElement.style.transform = 'rotate(' + t.rotate + 'deg)';
-      viewElement.style.filter = 'hue-rotate('+t.hueRotate+'deg) saturate('+t.saturate+'%)';
+      viewElement.style.filter = 'hue-rotate('+t.hueRotate+'deg) saturate('+t.saturate+'%) contrast('+t.contrast+'%)';
       div.appendChild(viewElement);
 
       if (t.hasActed) {
@@ -193,9 +194,20 @@
 
       var healthContainer = document.createElement('div');
       healthContainer.classList.add('health');
-
+      var count = 0;
       for (var i = t.health; i > 0; i--) {
-        healthContainer.innerText += '❤';
+        if (i > 5 || (count + i) > 5) {
+          healthContainer.innerText += '💕';
+          i--;
+        }
+        else if (i >= 1) {
+          healthContainer.innerText += '❤';
+        }
+        // Half damage is possible with crits.
+        else {
+          healthContainer.innerText += '💔';
+        }
+        count++;
       }
       t.$field.appendChild(healthContainer);
     },
@@ -228,28 +240,28 @@
       log(t.view, 'was slain!');
       t._alive = false;
       t.stage.removeActor(t);
-      t.stage = n;
-      t.pos = n;
-      t.str = n;
-      t.dex = n;
-      t.int = n;
-      t._sta = n;
-      t.maxHealth = n;
-      t._health = n;
-      t.type = n;
-      t.view = n;
-      t.$field = n;
-      t.$view = n;
-      t.curAction = n;
-      t.rotate = n;
-      t._hasAttacked = n;
-      t._hasMoved = n;
-      t._hasActed = n;
-      t.actions = n;
+      t.stage = null;
+      t.pos = null;
+      t.str = null;
+      t.dex = null;
+      t.int = null;
+      t._sta = null;
+      t.maxHealth = null;
+      t._health = null;
+      t.type = null;
+      t.view = null;
+      t.$field = null;
+      t.$view = null;
+      t.curAction = null;
+      t.rotate = null;
+      t._hasAttacked = null;
+      t._hasMoved = null;
+      t._hasActed = null;
+      t.actions = null;
     }
   };
 
-  dp(Player.prototype, 'sta', {
+  Object.defineProperty(Player.prototype, 'sta', {
     get: function() {
       return this._sta;
     },
@@ -261,7 +273,7 @@
     }
   });
 
-  dp(Player.prototype, 'health', {
+  Object.defineProperty(Player.prototype, 'health', {
     get: function() {
       return this._health;
     },
@@ -273,7 +285,7 @@
     }
   });
 
-  dp(Player.prototype, 'hasActed', {
+  Object.defineProperty(Player.prototype, 'hasActed', {
     get: function() {
       return this._hasActed;
     },
@@ -284,7 +296,7 @@
     }
   });
 
-  dp(Player.prototype, 'hasMoved', {
+  Object.defineProperty(Player.prototype, 'hasMoved', {
     get: function() {
       return this._hasMoved;
     },
@@ -303,7 +315,7 @@
     }
   });
 
-  dp(Player.prototype, 'hasAttacked', {
+  Object.defineProperty(Player.prototype, 'hasAttacked', {
     get: function() {
       return this._hasAttacked;
     },
@@ -322,13 +334,13 @@
     }
   });
 
-  dp(Player.prototype, 'alive', {
+  Object.defineProperty(Player.prototype, 'alive', {
     get: function() {
       return this._alive;
     }
   });
 
-  dp(Player.prototype, 'actions', {
+  Object.defineProperty(Player.prototype, 'actions', {
     get: function() {
       return this._actions;
     },

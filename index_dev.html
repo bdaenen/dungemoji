@@ -1,0 +1,1289 @@
+<!doctype html><meta charset="utf-8"><style type="text/css">* {
+  margin: 0;
+  padding: 0;
+  color: #AAA;
+}
+html {
+  height: 100%;
+  background: #383838;
+}
+body {
+  position: relative;
+}
+.r,
+.g,
+.b {
+  width: 15px;
+  height: 15px;
+  margin-right: 10px;
+  display: inline-block;
+}
+.col {
+  width: 33%;
+  display: inline-block;
+}
+.r {
+  background: #B00;
+}
+.g {
+  background: #0B0;
+}
+.b {
+  background: #00B;
+}
+#m table,
+.emo,
+canvas {
+  color: red;
+  font-size: 3em;
+  margin: 0;
+  font-family: 'Segoe Ui Emoji', sans-serif;
+}
+#m table {
+  table-layout: fixed;
+  margin: 0 auto;
+  width: 960px;
+  height: 360px;
+  border: 5px solid green;
+  text-align: center;
+  border-collapse: collapse;
+}
+.enemy #m table {
+  border: 5px solid red;
+}
+#m table:first-of-type tr:last-child td {
+  border-bottom: 0;
+}
+tr {
+  width: 100%;
+  height: 33%;
+  background-color: #633f19;
+}
+td {
+  border: 10px solid rgba(123, 77, 29, 0.4);
+  width: 33%;
+  height: 33%;
+  position: relative;
+}
+ul,
+li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+#p tr:first-child td {
+  border-top: 0;
+}
+.a {
+  display: none;
+  top: 0;
+  bottom: 0;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  z-index: 1;
+}
+.a li {
+  position: relative;
+  display: inline-block;
+  font-size: 40px;
+  height: 80px;
+  width: 80px;
+  vertical-align: middle;
+  line-height: 80px;
+  top: 30px;
+}
+.a li:after {
+  top: -5px;
+  left: 0;
+  content: '◼';
+  position: absolute;
+  z-index: -1;
+  font-size: 100px;
+  width: 80px;
+  height: 85px;
+}
+.valid {
+  background: rgba(0, 200, 0, 0.3);
+}
+td .a {
+  display: block;
+}
+.turn {
+  position: absolute;
+  right: 0;
+  top: 55%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  color: green;
+  font-size: 40px;
+}
+.enemy .turn {
+  top: 45%;
+  bottom: auto;
+  color: red;
+}
+.a li[data-action-id="endTurn"]:before {
+  content: '';
+  position: absolute;
+  top: 25px;
+  bottom: 40px;
+  width: auto;
+  background: #0078d7;
+  left: 20px;
+  right: 22px;
+}
+.health {
+  font-size: 20px;
+  pointer-events: none;
+}
+.view {
+  pointer-events: none;
+  opacity: 1;
+}
+.view.hasActed {
+  opacity: 0.5;
+}
+.noRange {
+  filter: grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8);
+}
+#mm {
+  position: absolute;
+  top: 50%;
+  left: -20px;
+  transform: translate(-100%, -50%);
+  opacity: 1;
+}
+#mm ul {
+  width: 100%;
+  background: #633f19;
+  border-top: 5px solid red;
+  border-bottom: 5px solid green;
+}
+#mm li {
+  height: 40px;
+  width: 100px;
+  background: #633f19;
+  border: 4px solid #000;
+}
+#mm .active {
+  background: green;
+  position: relative;
+}
+#mm .active:before {
+  background: red;
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0.3;
+  transform: translateY(calc(-100% - 8px));
+}
+.c {
+  position: relative;
+  margin: 0 auto;
+  width: 960px;
+}
+#log {
+  overflow-y: scroll;
+  height: 150px;
+  width: 200px;
+  margin: 0 auto;
+  font-family: 'Segoe Ui Emoji', sans-serif;
+}
+#log::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+.wall {
+  background-color: transparent;
+  border-color: transparent;
+}</style><div id="m"><ul class="a"></ul><div class="c"><table id="e"><tr id="e-b"><td id="e-b-l"></td><td id="e-b-c"></td><td id="e-b-r"></td></tr><tr id="e-m"><td id="e-m-l"></td><td id="e-m-c"></td><td id="e-m-r"></td></tr><tr id="e-f"><td id="e-f-l"></td><td id="e-f-c"></td><td id="e-f-r"></td></tr></table><table id="p"><tr id="p-f"><td id="p-f-l"></td><td id="p-f-c"></td><td id="p-f-r"></td></tr><tr id="p-m"><td id="p-m-l"></td><td id="p-m-c"></td><td id="p-m-r"></td></tr><tr id="p-b"><td id="p-b-l"></td><td id="p-b-c"></td><td id="p-b-r"></td></tr></table><div id="mm"><ul id="mmul"><li></li><li></li><li></li><li class="active"></li><li></li><li></li></ul></div></div></div><div class="c"><div id="log"></div></div><div class="turn">Player Turn</div><div class="i"><div class="col"><p>Turns are 1 character a time. Move and atk can occur in any order.</p><p>Click a character to select its action.</p></div><div class="col"><p>Goal: Clear the frontal enemy row, then make the warrior push. Push the last row to win.</p></div><div class="col"><p><span class="r"></span>High HP, low atk. Can push enemy's lane. Low dodge chance.</p><p><span class="g"></span>Low HP, high atk. Can attack ranged or diagonal. High dodge chance.</p><p><span class="b"></span>Very low HP, avg atk. Can attack all in a row, ranged. Can't dodge.</p></div></div><script>var d=document,w=window;window.$ = d.querySelector.bind(d);w.$$ = d.querySelectorAll.bind(d);w.find = function(parent, searchTerm){return parent.querySelectorAll(searchTerm)};w.log=function(str){var n=$('#log');n.innerText+=[].join.call(arguments, ' ')+"\n";n.scrollTop = n.scrollHeight;}</script><script>(function () {
+  'use strict';
+
+  var Player = function(stage){
+    var t = this;
+    t.stage = stage;
+    t.pos = {x:0,y:0};
+    t.str = 1;
+    t.dex = 10;
+    t.int = 10;
+    t._sta = 5;
+    t.maxHealth = this._sta;
+    t._health = this._sta;
+    t.type = stage.P;
+    t.view = "😡";
+    t.$field = null;
+    t.$view = null;
+    t.curAction = null;
+    t.rotate = 0;
+    t.hueRotate = 0;
+    t.saturate = 100;
+    t.contrast = 100;
+    t._hasAttacked = false;
+    t._hasMoved = false;
+    t._hasActed = false;
+    t._alive = true;
+    t._actions = [
+      {
+        actionId: 'move',
+        view: '🏃',
+        range: 1,
+        type: stage.P
+      },
+      {
+        actionId: 'attack',
+        view: '🗡',
+        range: 1,
+        rangeX: 0,
+        type: stage.E
+      },
+      {
+        actionId: 'endTurn',
+        view: '🔚',
+        type: stage.P
+      }
+    ];
+  };
+
+  Player.prototype = {
+    move: function(x, y){
+      if (x instanceof Node) {
+        return this.move(+x.dataset.x, +x.dataset.y);
+      }
+      var $field = this.stage.fieldByCoord(x, y);
+      if (this.stage.playerInField($field) || $field.classList.contains('wall')) {
+        console.warn('cant move to occupied or walled field');
+        return false;
+      }
+      this.pos.x = x;
+      this.pos.y = y;
+      this.stage.dirty = true;
+
+      if (!this.playerTarget) {
+        log(this.view, 'moves');
+      }
+      else {
+        log(this.view, 'moves towards', this.playerTarget.view);
+      }
+    },
+    attack: function($field) {
+      if (!$field) {
+        return;
+      }
+      var target = this.stage.playerInField($field);
+      var critmp = 1;
+      log(this.view, 'attacks', target.view);
+      if (Math.random() > target.dex/100) {
+        (Math.random() < this.dex/150) && (critmp = 1.5) && log('Critical hit!');
+        log(target.view, 'receives', (this.str * critmp), 'damage');
+        target.health -= (this.str * critmp);
+      }
+      else {
+        log(target.view, 'dodged!');
+        // Dodged
+      }
+    },
+    selectAction: function(actionId) {
+      var t = this;
+      this.curAction = this.actions.filter(function(o){return o.actionId === actionId})[0];
+
+      if (t.curAction.range) {
+        t.hideValidActionTargets();
+        t.renderValidActionTargets(this.curAction);
+        t.stage.state = t.stage.S_TAR;
+      }
+      else {
+        t.performSelectedAction();
+      }
+    },
+    performSelectedAction: function($field) {
+      var t = this;
+      var a = t.curAction.actionId;
+      t.stage.hideSelectAction();
+      t[a]($field);
+      if (a === 'move') {
+        t.hasMoved = true;
+      }
+      else if (a === 'attack') {
+        t.hasAttacked = true;
+      }
+      else if (a === 'endTurn') {
+        t.endTurn();
+      }
+      t.hideValidActionTargets();
+      t.stage.dirty = true;
+    },
+    endTurn: function() {
+      // Only a player can end player turns, only enemy can end enemy turns.
+      if (this.stage.turn === this.type) {
+        this.hasActed = true;
+        this.stage.endTurn();
+      }
+    },
+    getValidActionTargets: function(action) {
+      var ff;
+      var x;
+      var y;
+      var f;
+      var i;
+
+      if (action.type === this.stage.P) {
+        if (this.type === this.stage.P) {
+          ff = this.stage.playerFieldByCoord.bind(this.stage);
+        }
+        else {
+          ff = this.stage.enemyFieldByCoord.bind(this.stage);
+        }
+        x = this.pos.x;
+        y = this.pos.y;
+        f = [];
+        for (i = 1; i <= action.range; i++) {
+          f = f.concat([ff(x + i, y), ff(x - i, y), ff(x, y + i), ff(x, y - i)]);
+        }
+
+        // Filter out undefined nodes and occupied nodes.
+        f = f.filter(function (o) {
+          return (o && !(find(o, '.view').length) && !(o.classList.contains('wall')))
+        });
+      }
+      if (action.type === this.stage.E) {
+        if (this.type === this.stage.P) {
+          ff = this.stage.enemyFieldByCoord.bind(this.stage);
+        }
+        else {
+          ff = this.stage.playerFieldByCoord.bind(this.stage);
+        }
+        x = this.pos.x;
+        y = this.pos.y;
+        f = [];
+        for (i = 1; i <= action.range; i++) {
+          f = f.concat([ff(x, y + i), ff(x, y - i)]);
+        }
+        f = f.filter(function(o){return o});
+      }
+
+      return f;
+    },
+    renderValidActionTargets: function(action) {
+      var fields = this.getValidActionTargets(action);
+      fields.forEach(function(o){
+        o.classList.add('valid');
+      });
+
+      return fields;
+    },
+    hideValidActionTargets: function() {
+      $$('.valid').forEach(function(n){n.classList.remove('valid')});
+    },
+    render: function(div) {
+      var t = this;
+      var viewElement = document.createElement('div');
+      viewElement.innerText = t.view;
+      viewElement.classList.add('view');
+      viewElement.style.transform = 'rotate(' + t.rotate + 'deg)';
+      viewElement.style.filter = 'hue-rotate('+t.hueRotate+'deg) saturate('+t.saturate+'%) contrast('+t.contrast+'%)';
+      div.appendChild(viewElement);
+
+      if (t.hasActed) {
+        viewElement.classList.add('hasActed');
+      }
+
+      t.$view = viewElement;
+      t.$field = div;
+
+      var healthContainer = document.createElement('div');
+      healthContainer.classList.add('health');
+      var count = 0;
+      for (var i = t.health; i > 0; i--) {
+        if (i > 5 || (count + i) > 5) {
+          healthContainer.innerText += '💕';
+          i--;
+        }
+        else if (i >= 1) {
+          healthContainer.innerText += '❤';
+        }
+        // Half damage is possible with crits.
+        else {
+          healthContainer.innerText += '💔';
+        }
+        count++;
+      }
+      t.$field.appendChild(healthContainer);
+    },
+    renderActions: function () {
+      var t = this;
+      var b = document.createElement('b');
+      t.actions.forEach(function(action) {
+        var $n = document.createElement('li');
+        if ((action.actionId === 'move') && t.hasMoved) {
+          return;
+        }
+        else if ((action.actionId === 'attack') && t.hasAttacked) {
+          return;
+        }
+
+        var targets = t.getValidActionTargets(action);
+        if (action.actionId !== 'endTurn' && (!targets || !targets.length)) {
+          $n.classList.add('noRange');
+        }
+
+        $n.innerText = action.view;
+        $n.dataset.actionId = action.actionId;
+        b.appendChild($n);
+      }, t);
+
+      return b.innerHTML;
+    },
+    kill: function(){
+      var t = this;
+      log(t.view, 'was slain!');
+      t._alive = false;
+      t.stage.removeActor(t);
+      t.stage = null;
+      t.pos = null;
+      t.str = null;
+      t.dex = null;
+      t.int = null;
+      t._sta = null;
+      t.maxHealth = null;
+      t._health = null;
+      t.type = null;
+      t.view = null;
+      t.$field = null;
+      t.$view = null;
+      t.curAction = null;
+      t.rotate = null;
+      t._hasAttacked = null;
+      t._hasMoved = null;
+      t._hasActed = null;
+      t.actions = null;
+    }
+  };
+
+  Object.defineProperty(Player.prototype, 'sta', {
+    get: function() {
+      return this._sta;
+    },
+    set: function(sta) {
+      var t = this;
+      t._sta = sta;
+      t.maxHealth = t._sta;
+      t.health > t.maxHealth && (t.health = t.maxHealth);
+    }
+  });
+
+  Object.defineProperty(Player.prototype, 'health', {
+    get: function() {
+      return this._health;
+    },
+    set: function(val) {
+      var t = this;
+      t._health = val;
+      t.health > t.maxHealth && (t._health = t.maxHealth);
+      t.health <= 0 && t.kill();
+    }
+  });
+
+  Object.defineProperty(Player.prototype, 'hasActed', {
+    get: function() {
+      return this._hasActed;
+    },
+    set: function(val) {
+      this._hasActed = val;
+      this._hasAttacked = val;
+      this._hasMoved = val;
+    }
+  });
+
+  Object.defineProperty(Player.prototype, 'hasMoved', {
+    get: function() {
+      return this._hasMoved;
+    },
+    set: function(val) {
+      var t = this;
+      if (val === t._hasMoved) {
+        return;
+      }
+      t._hasMoved = val;
+      if (t._hasMoved && t._hasAttacked && !t.hasActed) {
+        t.hasActed = true;
+      }
+      else if (!val) {
+        t._hasActed = false;
+      }
+    }
+  });
+
+  Object.defineProperty(Player.prototype, 'hasAttacked', {
+    get: function() {
+      return this._hasAttacked;
+    },
+    set: function(val) {
+      var t = this;
+      if (val === t._hasAttacked) {
+        return;
+      }
+      t._hasAttacked = val;
+      if (t._hasMoved && t._hasAttacked && !t.hasActed) {
+        t.hasActed = true;
+      }
+      else if (!val) {
+        t._hasActed = false;
+      }
+    }
+  });
+
+  Object.defineProperty(Player.prototype, 'alive', {
+    get: function() {
+      return this._alive;
+    }
+  });
+
+  Object.defineProperty(Player.prototype, 'actions', {
+    get: function() {
+      return this._actions;
+    },
+    set: function(v){
+      this._actions = v;
+    }
+  });
+
+  window.Player = Player;
+}());</script><script>(function () {
+  'use strict';
+
+  var Rogue = function(stage){
+    Player.call(this, stage);
+    this.view = '🧝🏼';
+    this.maxHealth = 3;
+    this.health = 3;
+    this.dex = 35;
+    this.str = 2;
+  };
+
+  var p = Object.create(Player.prototype);
+  p.constructor = Rogue;
+
+  p.getValidActionTargets = function(action) {
+    if (action.actionId !== 'attack') {
+      return Player.prototype.getValidActionTargets.call(this, action);
+    }
+
+    var ff;
+    var x;
+    var y;
+    var f;
+
+    if (this.type === this.stage.E) {
+      ff = this.stage.playerFieldByCoord.bind(this.stage);
+    }
+    else {
+      ff = this.stage.enemyFieldByCoord.bind(this.stage);
+    }
+    x = this.pos.x;
+    y = this.pos.y;
+    f = [
+      ff(x+1,y+1),
+      ff(x-1,y+1),
+      ff(x-1,y-1),
+      ff(x+1,y-1),
+      ff(x,y-2),
+      ff(x,y-3),
+      ff(x,y+2),
+      ff(x,y+3)
+    ];
+    return f.filter(function(o){return o});
+  };
+
+  Rogue.prototype = p;
+
+  window.Rogue = Rogue;
+}());</script><script>(function () {
+  'use strict';
+
+  var Mage = function(stage){
+    Player.call(this, stage);
+    this.view = '🧙🏻‍♂';
+    this.maxHealth = 2;
+    this.health = 2;
+    this.str = 1.5;
+    this.dex = 0;
+    this.actions[1].range = 2;
+    this.actions[1].rangeX = 2;
+  };
+
+  var p = Object.create(Player.prototype);
+  p.constructor = Mage;
+
+  p.getValidActionTargets = function(action) {
+    if (action.actionId !== 'attack') {
+      return Player.prototype.getValidActionTargets.call(this, action);
+    }
+
+    var ff;
+    var x;
+    var y;
+    var f = [];
+
+    if (this.type === this.stage.P) {
+      ff = this.stage.enemyFieldByCoord.bind(this.stage);
+    }
+    else {
+      ff = this.stage.playerFieldByCoord.bind(this.stage);
+    }
+    x = this.pos.x;
+    y = this.pos.y;
+    for (var i=0,j;i<=2;i++) {
+      j=1;
+      for(;j<=3;j++){
+        f=f.concat([ff(x+i,y+j)]);
+        f=f.concat([ff(x+i,y-j)]);
+        f=f.concat([ff(x-i,y+j)]);
+        f=f.concat([ff(x-i,y-j)]);
+      }
+    }
+    return f.filter(function(o){return o});
+  };
+
+  Mage.prototype = p;
+
+  window.Mage = Mage;
+}());</script><script>(function () {
+  'use strict';
+
+  var Warrior = function(stage){
+    Player.call(this, stage);
+    this.maxHealth = 7;
+    this.health = 7;
+  };
+
+  var p = Object.create(Player.prototype);
+  p.constructor = Warrior;
+
+  p.push = function() {
+    this.stage.playerPush();
+    log(this.view,'pushed onward!');
+    this.endTurn();
+  };
+
+  p.pushEnemy = function() {
+    this.stage.enemyPush();
+    log(this.view,'pushed backward!');
+    this.endTurn();
+  };
+
+  Object.defineProperty(p, 'actions', {
+    get: function(){
+      var fp = this.stage.playerInField.bind(this.stage);
+      var ff = this.stage.fieldByCoord.bind(this.stage);
+      if (this.pos.y !== 3 || fp(ff(0, 2)) || fp(ff(1,2)) || fp(ff(2,2))) {
+        return this._actions;
+      }
+      else {
+        var actions = JSON.parse(JSON.stringify(this._actions));
+        actions[1].actionId = 'push';
+        actions[1].view = '⬆';
+        actions[0].actionId = 'pushEnemy';
+        actions[0].view = 'V';
+
+        return actions;
+      }
+    },
+    set: function(v) {
+      this._actions = v;
+    }
+  });
+
+  Warrior.prototype = p;
+
+  window.Warrior = Warrior;
+}());</script><script>(function () {
+  'use strict';
+
+  var Enemy = function(stage){
+    Player.call(this, stage);
+    this.type = stage.E;
+    this.view = '🦂';
+    this.playerTarget = null;
+  };
+
+  var p = Object.create(Player.prototype);
+  p.constructor = Enemy;
+
+  p.determineTarget = function() {
+    this.playerTarget = null;
+    this.stage.players.forEach(function(player){
+      if (this.playerTarget) {
+        return;
+      }
+
+      if (this.inAttackRange(player)) {
+        this.playerTarget = player;
+      }
+
+    }, this);
+
+    if (!this.playerTarget) {
+      this.playerTarget = this.getClosest(this.stage.P);
+    }
+
+    log(this.view, "targets", this.playerTarget.view);
+    return this;
+  };
+
+  p.determineAction = function() {
+    if (!this.playerTarget || !this.playerTarget.alive) {
+      this.determineTarget();
+    }
+    if (this.inAttackRange(this.playerTarget)) {
+      if (!this.hasAttacked) {
+        this.selectAction('attack');
+        this.performSelectedAction(this.playerTarget.$field);
+      }
+      else {
+        this.selectAction('endTurn');
+        return;
+      }
+    }
+    else if (!this.hasMoved) {
+      var x = this.pos.x;
+      var y = this.pos.y;
+      var deltaX = x - this.playerTarget.pos.x;
+      var deltaY = 2 - y;
+      var $field = null;
+
+      if (deltaY > 0) {
+        $field = this.stage.enemyFieldByCoord(x, y+1);
+      }
+      else if (deltaX > 0) {
+        $field = this.stage.enemyFieldByCoord(x-1, y);
+      }
+      else if (deltaX < 0) {
+        $field = this.stage.enemyFieldByCoord(x+1, y);
+      }
+
+      if ($field) {
+        this.selectAction('move');
+        this.performSelectedAction($field);
+      }
+      else {
+        this.hasMoved = true;
+      }
+    }
+    else {
+      this.selectAction('endTurn');
+      //this.performSelectedAction();
+      return;
+    }
+
+    this.stage.state = this.stage.S_AI;
+  };
+
+  p.inAttackRange = function (target) {
+    var t = this;
+    var s = false;
+    this.curAction = this.actions.filter(function(o){return o.actionId === 'attack'})[0];
+    var targets = t.getValidActionTargets(t.curAction);
+    if (!targets) {return false;}
+
+    targets.forEach(function(f) {
+      if (target.$field === f) {
+        s = true;
+      }
+    });
+    return s;
+  };
+
+  p.getAttackable = function() {
+    var tar;
+    this.stage.players.forEach(function(player) {
+      if (!tar && this.inAttackRange(player)) {
+        tar = player;
+      }
+    });
+
+    return tar;
+  };
+
+  p.getClosest = function(targetType) {
+    var closestDistance = 1/0;
+    var closestY = 1/0;
+    var closestTarget = null;
+    if (targetType === this.stage.P) {
+      this.stage.players.forEach(function(player){
+        var xDistance = Math.abs(player.pos.x - this.pos.x);
+        var yDistance = Math.abs(player.pos.y - this.pos.y);
+        var distance = xDistance + yDistance;
+        // Give priority over Y distance.
+        if (yDistance < closestY || distance < closestDistance) {
+          closestDistance = distance;
+          closestY = yDistance;
+          closestTarget = player;
+        }
+      }, this);
+    }
+
+    return closestTarget;
+  };
+
+  Enemy.prototype = p;
+  window.Enemy = Enemy;
+}());</script><script>(function () {
+  'use strict';
+
+  var Scorpion = function(stage){
+    Enemy.call(this, stage);
+    this.view = '🦂';
+    this.type = stage.E;
+    this.hueRotate = 120;
+    this.saturate = 360;
+  };
+
+  var p = Object.create(Enemy.prototype);
+  p.constructor = Scorpion;
+
+  p.getValidActionTargets = function(action){
+    return Rogue.prototype.getValidActionTargets.call(this, action);
+  };
+
+  Scorpion.prototype = p;
+  window.Scorpion = Scorpion;
+}());</script><script>(function () {
+  'use strict';
+
+  var Spider = function(stage){
+    Enemy.call(this, stage);
+    this.maxHealth = 3;
+    this.health = 3;
+    this.dex = 30;
+    this.type = stage.E;
+    this.view = '🕷';
+    this.rotate = 180;
+    this.hueRotate = 210;
+    this.saturate = 600;
+  };
+
+  var p = Object.create(Enemy.prototype);
+  p.constructor = Spider;
+
+  p.getValidActionTargets = function(action){
+    return Mage.prototype.getValidActionTargets.call(this, action);
+  };
+
+  Spider.prototype = p;
+
+  window.Spider = Spider;
+}());</script><script>(function () {
+  'use strict';
+
+  var Dragon = function(stage){
+    Enemy.call(this, stage);
+    this.view = '🦖';
+    this.hueRotate = 330;
+    this.saturate = 250;
+    this.contrast = 400;
+  };
+
+  var p = Object.create(Enemy.prototype);
+  p.constructor = Dragon;
+
+  Dragon.prototype = p;
+  window.Dragon = Dragon;
+}());</script><script>(function () {
+  'use strict';
+
+  var Stage = function(){
+    this.renderTargets = [];
+    this.dirty = false;
+    this._state = this.S_CHAR;
+    this._turn = '';
+    this.turn = this.P;
+    this.currentSelection = null;
+    this.rows = 8;
+    this.activeRow = Math.floor(this.rows/2);
+  };
+
+  Stage.prototype = {
+    S_CHAR: 1,
+    S_ACT: 2,
+    S_TAR: 3,
+    S_AI: 4,
+    P: 1,
+    E: 2,
+    init: function(){},
+    addActor: function(player){
+      this.renderTargets.push(player);
+      this.dirty = true;
+    },
+    removeActor: function(player){
+      var idx = this.renderTargets.indexOf(player);
+      idx !== -1 && this.renderTargets.splice(idx, 1);
+      this.dirty = true;
+    },
+    render: function(){
+      // Clear the field
+      mappedStage.forEach(function(row){
+        row.forEach(function(col) {
+          col.innerText = '';
+          if (((+col.dataset.y) < 3-this.activeRow) || ((+col.dataset.y) > (this.rows - this.activeRow+2))) {
+            col.classList.add('wall');
+            col.parentNode.classList.add('wall');
+          }
+          else {
+            col.classList.remove('wall');
+            col.parentNode.classList.remove('wall');
+          }
+        }, this);
+      }, this);
+
+      // Render the stage
+      this.renderTargets.forEach(function(item){
+        var $field = this.fieldByCoord(item.pos.x, item.pos.y);
+        item.render($field);
+      }, this);
+
+      var $mmul = $('#mmul');
+      $mmul.innerHTML = '';
+      for (var i = 0; i < this.rows; i++) {
+        $mmul.appendChild(document.createElement('li'));
+      }
+      var rows = $$('#mm li');
+      rows.forEach(function(row){row.classList.remove('active')});
+      rows[this.activeRow].classList.add('active');
+
+      this.dirty = false;
+    },
+    /**
+     * @param x
+     * @param y
+     * @param [type=FIELD_TYPE_STAGE]
+     * @returns {*}
+     */
+    fieldByCoord: function(x, y, type) {
+      switch (type) {
+        case FIELD_TYPE_ENEMY:
+          return mappedEnemyFields[y] && mappedEnemyFields[y][x];
+          break;
+        case FIELD_TYPE_PLAYER:
+          return mappedPlayerFields[y] && mappedPlayerFields[y][x];
+          break;
+        case FIELD_TYPE_STAGE:
+        default:
+          return mappedStage[y] && mappedStage[y][x];
+          break;
+      }
+    },
+    playerFieldByCoord: function(x, y, type) {
+      if (y > 2) {
+        return this.fieldByCoord(x, y, type);
+      }
+    },
+    enemyFieldByCoord: function(x, y, type) {
+      if (y <= 2) {
+        return this.fieldByCoord(x, y, type);
+      }
+    },
+    playerInField: function($field, type, yetToAct) {
+      var playerFound = null;
+      var targets;
+
+      if (!type) {
+        targets = this.renderTargets;
+      }
+      else if (type === this.P) {
+        targets = yetToAct ? this.playersToAct : this.players;
+      }
+      else {
+        targets = yetToAct ? this.enemiesToAct : this.enemiesToAct;
+      }
+
+      targets.forEach(function(player){
+        if (player.$field && (player.$field.id === $field.id)) {
+          playerFound = player;
+        }
+      });
+
+      return playerFound;
+    },
+    updateAi: function() {
+      this.state = this.S_AI;
+      var yetToAct = this.enemiesToAct;
+      var enemy = yetToAct.shift();
+
+      if (!enemy) {
+        return this.endTurn();
+      }
+
+      enemy.determineTarget();
+      (function (enemy) {
+        setTimeout(function(){
+          this.state === this.S_AI && enemy.determineAction();
+        }.bind(this), 1000);
+        setTimeout(function(){
+          this.state === this.S_AI && enemy.determineAction();
+        }.bind(this), 2000);
+        setTimeout(function(){
+          this.state === this.S_AI && enemy.determineAction();
+        }.bind(this), 3000);
+      }.bind(this)(enemy));
+    },
+    renderSelectAction: function() {
+      setTimeout(function(){
+        $('.a').innerHTML = this.currentSelection.renderActions();
+        this.currentSelection.$field.appendChild($('.a'));
+      }.bind(this), 100);
+    },
+    hideSelectAction: function() {
+      $('.a').innerHTML = '';
+      $('#m').appendChild($('.a'));
+    },
+    endTurn: function() {
+      if (!this.enemiesToAct.length && !this.playersToAct.length) {
+        log('= end of round =');
+        this.renderTargets.forEach(function(e){e.hasActed = false}, this);
+      }
+      else {
+        log('= end of turn =');
+      }
+      this.turn = (this.turn === this.E) ? this.P : this.E;
+      this.state = this.S_CHAR;
+    },
+    playerPush: function() {
+      this.activeRow--;
+      this.enemies.forEach(function(enemy){
+        if (enemy.pos.y < 2) {
+          enemy.pos.y++;
+        }
+      });
+    },
+    enemyPush: function() {
+      this.activeRow++;
+      this.players.forEach(function(player){
+        player.pos.y > 3 && (player.pos.y--);
+      });
+    }
+  };
+
+  Object.defineProperty(Stage.prototype, 'state', {
+    get: function(){
+      return this._state;
+    },
+    set: function(state) {
+      this._state = state;
+      if (state === this.S_ACT) {
+        this.renderSelectAction();
+      }
+      else if (state !== this.S_TAR) {
+        this.hideSelectAction();
+      }
+    }
+  });
+
+  Object.defineProperty(Stage.prototype, 'turn', {
+    get: function(){
+      return this._turn;
+    },
+    set: function(turn){
+      var $turn = $('.turn');
+      var cl = $('html').classList;
+      this._turn = turn;
+      if (turn === this.E) {
+        $turn.innerText = 'Enemy';
+        cl.add('enemy');
+      }
+      else {
+        $turn.innerText = 'Player';
+        cl.remove('enemy');
+      }
+      (turn === this.E) ? (($turn.innerText = 'Enemy') && cl.add('enemy')) : (($turn.innerText = 'Player') && cl.remove('enemy'));
+      $turn.innerText += ' Turn';
+      this.dirty = true;
+    }
+  });
+
+  Object.defineProperty(Stage.prototype, 'enemies', {
+    get: function() {
+      return this.renderTargets.filter(function(tar){
+        return tar.type === this.E;
+      }, this);
+    }
+  });
+
+  Object.defineProperty(Stage.prototype, 'players', {
+    get: function() {
+      return this.renderTargets.filter(function(tar){
+        return tar.type === this.P;
+      }, this);
+    }
+  });
+
+  Object.defineProperty(Stage.prototype, 'enemiesToAct', {
+    get: function() {
+      return this.renderTargets.filter(function(tar){
+        return tar.type === this.E && !tar.hasActed;
+      }, this);
+    }
+  });
+
+  Object.defineProperty(Stage.prototype, 'playersToAct', {
+    get: function() {
+      return this.renderTargets.filter(function(tar){
+        return tar.type === this.P && !tar.hasActed;
+      }, this);
+    }
+  });
+
+  window.mappedEnemyFields =
+    [
+      [$('#e-b-l'), $('#e-b-c'), $('#e-b-r')],
+      [$('#e-m-l'), $('#e-m-c'), $('#e-m-r')],
+      [$('#e-f-l'), $('#e-f-c'), $('#e-f-r')]
+    ];
+
+  window.mappedPlayerFields =
+    [
+      [$('#p-f-l'), $('#p-f-c'), $('#p-f-r')],
+      [$('#p-m-l'), $('#p-m-c'), $('#p-m-r')],
+      [$('#p-b-l'), $('#p-b-c'), $('#p-b-r')]
+    ];
+
+  window.mappedStage = mappedEnemyFields.concat(mappedPlayerFields);
+
+  var x = 0;
+  var y = 0;
+  mappedStage.forEach(function(row){
+    row.forEach(function($col){
+      $col.dataset.x = x;
+      $col.dataset.y = y;
+      x++;
+    });
+    y++;
+    x = 0;
+  });
+
+  window.FIELD_TYPE_PLAYER = 1;
+  window.FIELD_TYPE_ENEMY = 2;
+  window.FIELD_TYPE_STAGE = 3;
+
+  window.Stage = Stage;
+}());</script><script>(function () {
+  'use strict';
+
+  var Stage1 = function(){
+    Stage.call(this);
+  };
+
+  var p = Object.create(Stage.prototype);
+  p.constructor = Stage1;
+
+  p.init = function(){
+    // Mage
+    this.addActor(create(this, 0, 5, 'Mage'));
+    // Rogue
+    this.addActor(create(this, 2, 4, 'Rogue'));
+    // Warrior
+    this.addActor(create(this, 1, 3, 'Warrior'));
+
+    // Enemies
+    /*this.addActor(create(this, 2, 0, 'Scorpion'));
+    var spider = create(this, 0, 0, 'Spider');
+    this.addActor(spider);
+
+    this.addActor(create(this, 1, 0, 'Dragon'));*/
+
+    this.turn = this.P;
+    $('#log').innerText = '';
+  };
+
+  Stage1.prototype = p;
+
+  function create(stage, x, y, cn){
+    var p = new window[cn](stage);
+    p.move(x, y);
+    return p;
+  }
+
+  window.Stage1 = Stage1;
+}());</script><script>(function() {
+  'use strict';
+  var curStage = null;
+  var canvas = document.createElement('canvas');
+  var ctx = canvas.getContext('2d');
+  canvas.width = canvas.height = 55;
+  ctx.font = '72px "Segoe Ui Emoji"';
+  ctx.fillText('⬛', -9, 53);
+  //$('body').appendChild(canvas);
+  $('#m').style.backgroundImage = 'url("' + canvas.toDataURL() + '")';
+  var stage1 = new Stage1();
+  curStage = stage1;
+  stage1.init();
+
+  var gameLoop = function() {
+    if (curStage.turn === curStage.E && curStage.state !== curStage.S_AI) {
+      curStage.updateAi();
+    }
+    if (curStage.dirty) {
+      curStage.render();
+    }
+    requestAnimationFrame(gameLoop);
+  };
+
+  gameLoop();
+
+  mappedStage.forEach(function(row){
+    row.forEach(function(col){
+      col.addEventListener('click', clickCallback);
+    });
+  });
+
+  function clickCallback(e) {
+    if (curStage.turn !== curStage.P) {
+      return;
+    }
+    var $field = e.target;
+    var clickedPlayer = curStage.playerInField($field, curStage.P, true);
+    var curSel = curStage.currentSelection;
+
+    if(curStage.state === curStage.S_CHAR){
+      if (clickedPlayer) {
+        curStage.currentSelection = clickedPlayer;
+        curStage.state = curStage.S_ACT;
+      }
+    }
+    else if (curStage.state === curStage.S_ACT) {
+      var a;
+      if (a = $field.dataset.actionId) {
+        curSel.selectAction(a);
+        e.stopPropagation();
+      }
+      // Changing character is only possible on the initial action.
+      else if (!curSel.hasMoved && !curSel.hasAttacked && clickedPlayer) {
+        curStage.currentSelection = curStage.playerInField($field, curStage.P, true);
+        curStage.state = curStage.S_ACT;
+      }
+    }
+    else if (curStage.state === curStage.S_TAR) {
+      if ($field.classList.contains('valid')) {
+        curSel.performSelectedAction(e.target);
+        if (!curSel.hasMoved || !curSel.hasAttacked) {
+          curStage.state = curStage.S_ACT;
+          clickCallback(e);
+        }
+        else if (!curSel.curAction || curSel.curAction.actionId !== 'endTurn') {
+          curSel.endTurn();
+        }
+      }
+      // Changing action
+      else if (a = $field.dataset.actionId) {
+        curSel.selectAction(a);
+      }
+      else if (!curSel.hasMoved && !curSel.hasAttacked && clickedPlayer) {
+        curSel.hideValidActionTargets();
+        curStage.currentSelection = curStage.playerInField($field, curStage.P, true);
+        curStage.state = curStage.S_ACT;
+      }
+    }
+  }
+}());</script>

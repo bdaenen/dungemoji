@@ -1,6 +1,6 @@
 (function() {
   'use strict';
-  var curStage = n;
+  var curStage = null;
   var canvas = document.createElement('canvas');
   var ctx = canvas.getContext('2d');
   canvas.width = canvas.height = 55;
@@ -35,7 +35,7 @@
       return;
     }
     var $field = e.target;
-    var clickedPlayer = curStage.pInF($field, curStage.P, true);
+    var clickedPlayer = curStage.playerInField($field, curStage.P, true);
     var curSel = curStage.currentSelection;
 
     if(curStage.state === curStage.S_CHAR){
@@ -52,7 +52,7 @@
       }
       // Changing character is only possible on the initial action.
       else if (!curSel.hasMoved && !curSel.hasAttacked && clickedPlayer) {
-        curStage.currentSelection = curStage.pInF($field, curStage.P, true);
+        curStage.currentSelection = curStage.playerInField($field, curStage.P, true);
         curStage.state = curStage.S_ACT;
       }
     }
@@ -71,8 +71,10 @@
       else if (a = $field.dataset.actionId) {
         curSel.selectAction(a);
       }
-      else if (curStage.pInF($field, curStage.P, true)) {
-
+      else if (!curSel.hasMoved && !curSel.hasAttacked && clickedPlayer) {
+        curSel.hideValidActionTargets();
+        curStage.currentSelection = curStage.playerInField($field, curStage.P, true);
+        curStage.state = curStage.S_ACT;
       }
     }
   }

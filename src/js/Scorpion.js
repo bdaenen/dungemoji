@@ -4,12 +4,18 @@
   var Scorpion = function(stage){
     Enemy.call(this, stage);
     this.view = '🦂';
-    this.hueRotate = -20;
-    this.saturate = 300;
+    this.type = stage.E;
+    this.hueRotate = 120;
+    this.saturate = 360;
   };
 
-  Scorpion.prototype = Object.create(Enemy.prototype);
-  Scorpion.prototype.constructor = Scorpion;
+  var p = Object.create(Enemy.prototype);
+  p.constructor = Scorpion;
 
+  p.getValidActionTargets = function(action){
+    return Rogue.prototype.getValidActionTargets.call(this, action);
+  };
+
+  Scorpion.prototype = p;
   window.Scorpion = Scorpion;
 }());

@@ -4,8 +4,10 @@
   var Rogue = function(stage){
     Player.call(this, stage);
     this.view = '🧝🏼';
+    this.maxHealth = 3;
     this.health = 3;
     this.dex = 35;
+    this.str = 2;
   };
 
   var p = Object.create(Player.prototype);
@@ -21,14 +23,23 @@
     var y;
     var f;
 
-    ff = this.stage.eFByC.bind(this.stage);
+    if (this.type === this.stage.E) {
+      ff = this.stage.playerFieldByCoord.bind(this.stage);
+    }
+    else {
+      ff = this.stage.enemyFieldByCoord.bind(this.stage);
+    }
     x = this.pos.x;
     y = this.pos.y;
     f = [
       ff(x+1,y+1),
+      ff(x-1,y+1),
       ff(x-1,y-1),
+      ff(x+1,y-1),
       ff(x,y-2),
-      ff(x,y-3)
+      ff(x,y-3),
+      ff(x,y+2),
+      ff(x,y+3)
     ];
     return f.filter(function(o){return o});
   };

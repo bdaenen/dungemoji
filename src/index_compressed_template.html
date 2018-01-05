@@ -1,0 +1,27 @@
+<script>
+  // Hacked, minified version of tiny-inflate. See src/js/tiny-inflate-hacked.js for the readable version.
+  // This file is built using the gulp build task.
+  function T(){this.table=new uw(16),this.trans=new uw(288)}function D(t,e){this.source=t,this.sourceIndex=0,this.tag=0,this.bitcount=0,this.dest=e,this.destLen=0,this.ltree=new T,this.dtree=new T}function tbbb(t,e,r,n){var s,o;for(s=0;s<r;++s)t[s]=0;for(s=0;s<30-r;++s)t[s+r]=s/r|0;for(o=n,s=0;s<30;++s)e[s]=o,o+=1<<t[s]}function tbft(t,e){var r;for(r=0;r<7;++r)t.table[r]=0;for(t.table[7]=24,t.table[8]=152,t.table[9]=112,r=0;r<24;++r)t.trans[r]=256+r;for(r=0;r<144;++r)t.trans[24+r]=r;for(r=0;r<8;++r)t.trans[168+r]=280+r;for(r=0;r<112;++r)t.trans[176+r]=144+r;for(r=0;r<5;++r)e.table[r]=0;for(e.table[5]=32,r=0;r<32;++r)e.trans[r]=r}function tbt(t,e,r,n){var s,o;for(s=0;s<16;++s)t.table[s]=0;for(s=0;s<n;++s)t.table[e[r+s]]++;for(t.table[0]=0,o=0,s=0;s<16;++s)offs[s]=o,o+=t.table[s];for(s=0;s<n;++s)e[r+s]&&(t.trans[offs[e[r+s]]++]=s)}function tgb(t){t.bitcount--||(t.tag=t.source[t.sourceIndex++],t.bitcount=7);var e=1&t.tag;return t.tag>>>=1,e}function trb(t,e,r){if(!e)return r;for(;t.bitcount<24;)t.tag|=t.source[t.sourceIndex++]<<t.bitcount,t.bitcount+=8;var n=t.tag&65535>>>16-e;return t.tag>>>=e,t.bitcount-=e,n+r}function tds(t,e){for(;t.bitcount<24;)t.tag|=t.source[t.sourceIndex++]<<t.bitcount,t.bitcount+=8;var r=0,n=0,s=0,o=t.tag;do{n=2*n+(1&o),o>>>=1,++s,r+=e.table[s],n-=e.table[s]}while(n>=0);return t.tag=o,t.bitcount-=s,e.trans[r+n]}function tdt(t,e,r){var n,s,o,b,i,a;for(n=trb(t,5,257),s=trb(t,5,1),o=trb(t,4,4),b=0;b<19;++b)lengths[b]=0;for(b=0;b<o;++b){var u=trb(t,3,0);lengths[clcidx[b]]=u}for(tbt(code_tree,lengths,0,19),i=0;i<n+s;){var f=tds(t,code_tree);switch(f){case 16:var c=lengths[i-1];for(a=trb(t,2,3);a;--a)lengths[i++]=c;break;case 17:for(a=trb(t,3,3);a;--a)lengths[i++]=0;break;case 18:for(a=trb(t,7,11);a;--a)lengths[i++]=0;break;default:lengths[i++]=f}}tbt(e,lengths,0,n),tbt(r,lengths,n,s)}function tibd(t,e,r){for(;;){var n=tds(t,e);if(256===n)return TINF_OK;if(n<256)t.dest[t.destLen++]=n;else{var s,o,b,i;for(s=trb(t,length_bits[n-=257],length_base[n]),o=tds(t,r),i=b=t.destLen-trb(t,dist_bits[o],dist_base[o]);i<b+s;++i)t.dest[t.destLen++]=t.dest[i]}}}function tiub(t){for(var e,r,n;t.bitcount>8;)t.sourceIndex--,t.bitcount-=8;if(e=t.source[t.sourceIndex+1],e=256*e+t.source[t.sourceIndex],r=t.source[t.sourceIndex+3],r=256*r+t.source[t.sourceIndex+2],e!==(65535&~r))return TINF_DATA_ERROR;for(t.sourceIndex+=4,n=e;n;--n)t.dest[t.destLen++]=t.source[t.sourceIndex++];return t.bitcount=0,TINF_OK}function tu(t,e){var r,n,s=new D(t,e);do{switch(r=tgb(s),trb(s,2,0)){case 0:n=tiub(s);break;case 1:n=tibd(s,sltree,sdtree);break;case 2:tdt(s,s.ltree,s.dtree),n=tibd(s,s.ltree,s.dtree);break;default:n=TINF_DATA_ERROR}if(n!==TINF_OK)throw new Error("D error")}while(!r);return s.destLen<s.dest.length?"function"==typeof s.dest.slice?s.dest.slice(0,s.destLen):s.dest.subarray(0,s.destLen):s.dest}var uw=Uint16Array,ub=Uint8Array,TINF_OK=0,TINF_DATA_ERROR=-3,sltree=new T,sdtree=new T,length_bits=new ub(30),length_base=new uw(30),dist_bits=new ub(30),dist_base=new uw(30),clcidx=new ub([16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15]),code_tree=new T,lengths=new ub(320),offs=new uw(16);tbft(sltree,sdtree),tbbb(length_bits,length_base,4,3),tbbb(dist_bits,dist_base,2,1),length_bits[28]=0,length_base[28]=258,window.inflate=tu,window.gunzip=function(t,e){if(31!==t[0]||139!==t[1])throw new Error(1);if(8!==t[2])throw new Error(2);var r=t[3];if(224&r)throw new Error(3);var n=10;if(4&r&&(n+=t.readUInt16LE(n)+2),8&r){for(;t[n];)n++;n++}if(16&r){for(;t[n];)n++;n++}2&r&&(n+=2);var s=e.length,o=new ArrayBuffer(s);return window.inflate(t.slice(n,-8),o)};
+  var d='{$BUFFER}';
+  d = cnv(d);
+  function cnv(base64) {
+    var raw = window.atob(base64);
+    var rawLength = raw.length;
+    var array = new ub(new ArrayBuffer(rawLength));
+
+    for(var i = 0; i < rawLength; i++) {
+      array[i] = raw.charCodeAt(i);
+    }
+    return array;
+  }
+
+  var outputBuffer = new ub({$BUFFER_SIZE});
+  var dest = gunzip(d, outputBuffer);
+  dest.length = dest.byteLength;
+  Array.prototype.forEach.call(dest, function(b, i){
+    outputBuffer[i] = b;
+  });
+  var data = new TextDecoder("utf-8").decode(outputBuffer);
+  document.write(data);
+  document.close();
+</script>

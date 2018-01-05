@@ -47,7 +47,6 @@ canvas {
   border: 5px solid green;
   text-align: center;
   border-collapse: collapse;
-  background-color: #633f19;
 }
 .enemy #m table {
   border: 5px solid red;
@@ -58,6 +57,7 @@ canvas {
 tr {
   width: 100%;
   height: 33%;
+  background-color: #633f19;
 }
 td {
   border: 10px solid rgba(123, 77, 29, 0.4);
@@ -195,4 +195,8 @@ td .a {
 #log::-webkit-scrollbar {
   width: 0;
   background: transparent;
+}
+.wall {
+  background-color: transparent;
+  border-color: transparent;
 }

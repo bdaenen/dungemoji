@@ -17,9 +17,11 @@
     this.addActor(create(this, 1, 3, 'Warrior'));
 
     // Enemies
-    this.addActor(create(this, 1, 1, 'Scorpion'));
-    var spider = create(this, 0, 1, 'Spider');
+    /*this.addActor(create(this, 2, 0, 'Scorpion'));
+    var spider = create(this, 0, 0, 'Spider');
     this.addActor(spider);
+
+    this.addActor(create(this, 1, 0, 'Dragon'));*/
 
     this.turn = this.P;
     $('#log').innerText = '';

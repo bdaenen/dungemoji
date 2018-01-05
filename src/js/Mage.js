@@ -4,7 +4,9 @@
   var Mage = function(stage){
     Player.call(this, stage);
     this.view = '🧙🏻‍♂';
+    this.maxHealth = 2;
     this.health = 2;
+    this.str = 1.5;
     this.dex = 0;
     this.actions[1].range = 2;
     this.actions[1].rangeX = 2;
@@ -23,7 +25,12 @@
     var y;
     var f = [];
 
-    ff = this.stage.eFByC.bind(this.stage);
+    if (this.type === this.stage.P) {
+      ff = this.stage.enemyFieldByCoord.bind(this.stage);
+    }
+    else {
+      ff = this.stage.playerFieldByCoord.bind(this.stage);
+    }
     x = this.pos.x;
     y = this.pos.y;
     for (var i=0,j;i<=2;i++) {
