@@ -7,6 +7,9 @@
     this.type = stage.E;
     this.hueRotate = 120;
     this.saturate = 360;
+    this.dex = 30;
+    this.maxHealth = 3;
+    this.health = 3;
   };
 
   var p = Object.create(Enemy.prototype);

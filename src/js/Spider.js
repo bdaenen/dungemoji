@@ -3,14 +3,16 @@
 
   var Spider = function(stage){
     Enemy.call(this, stage);
-    this.maxHealth = 3;
-    this.health = 3;
-    this.dex = 30;
+    this.maxHealth = 2;
+    this.health = 2;
+    this.dex = 0;
+    this.str = 1.5;
     this.type = stage.E;
     this.view = '🕷';
     this.rotate = 180;
     this.hueRotate = 210;
     this.saturate = 600;
+
   };
 
   var p = Object.create(Enemy.prototype);

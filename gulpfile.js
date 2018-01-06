@@ -14,7 +14,7 @@
   /**
    *
    */
-  gulp.task('watch', ['html'], function() {
+  gulp.task('watch', ['gzip'], function() {
     gulp.watch(__dirname + '/src/**/*.less', ['gzip']);
     gulp.watch(__dirname + '/src/**/*.js', ['gzip']);
     gulp.watch(__dirname + '/src/**/*.html', ['gzip']);
@@ -36,11 +36,11 @@
    */
   gulp.task('html', ['css'], function (done) {
     return gulp.src('./src/index.html')
-      .pipe(inline({compress:false}))
+      .pipe(inline({compress:true}))
       .pipe(htmlmin({
         collapseWhitespace: true,
-        minifyCSS: false,
-        minifyJS: false
+        minifyCSS: true,
+        minifyJS: true
       }))
       .pipe(rename('index_dev.html'))
       .pipe(gulp.dest(__dirname));

@@ -10,6 +10,8 @@
     this.currentSelection = null;
     this.rows = 8;
     this.activeRow = Math.floor(this.rows/2);
+    this.intro = '';
+    this.heroStartCount = 0;
   };
 
   Stage.prototype = {
@@ -19,7 +21,18 @@
     S_AI: 4,
     P: 1,
     E: 2,
-    init: function(){},
+    init: function(){
+      if (tutorialEnabled()) {
+        this.renderIntro();
+      }
+      this.heroStartCount = this.players.length;
+    },
+    renderIntro: function(){
+      if (this.intro) {
+        $('#intro').innerHTML = this.intro;
+        $('#intro').classList.add('active');
+      }
+    },
     addActor: function(player){
       this.renderTargets.push(player);
       this.dirty = true;
@@ -28,6 +41,14 @@
       var idx = this.renderTargets.indexOf(player);
       idx !== -1 && this.renderTargets.splice(idx, 1);
       this.dirty = true;
+
+      if (!this.enemies.length) {
+        this.endStage();
+      }
+      else if (!this.players.length) {
+        this.gameOver();
+      }
+
     },
     render: function(){
       // Clear the field
@@ -170,6 +191,76 @@
       this.players.forEach(function(player){
         player.pos.y > 3 && (player.pos.y--);
       });
+    },
+
+    endStage: function() {
+      var award = '<span>🏆</span>';
+      if (this.heroStartCount === this.players.length - 1) {
+        award = '<span class="silver">🏆</span>';
+      }
+      else if (this.heroStartCount <= this.players.length - 2) {
+        award = '<span class="bronze">🏆</span>';
+      }
+      this.intro = '' +
+        '<div class="intro-container">' +
+        '<div class="sparkles">🎇</div>' +
+        '<div class="award">' + award + '</div>' +
+        '<button class="next-level">Next level</button>' +
+        '</div>';
+
+      this.renderIntro();
+
+      for (var i = 0; i < 5; i++) {
+        setTimeout(sparkle, i * 550);
+        setTimeout(function () {
+          $('.sparkles').classList.remove('active', 'half');
+        }, i * 550 + 500);
+      }
+      setTimeout(function () {
+        $('.award').classList.add('active');
+        $('.next-level').classList.add('active');
+        $('.next-level').addEventListener('click', function (e) {
+          window.loadNextLevel();
+        }.bind(this));
+      }, 2000);
+
+      function sparkle() {
+        var $s = $('.sparkles');
+        var x = rnd(35, 65) + '%';
+        var y = rnd(-150, 150) + 'px';
+        $s.classList.add('active');
+        $s.style.left = x;
+        $s.style.top = y;
+        setTimeout(function () {
+          $s.classList.add('half');
+        }, 300);
+      }
+    },
+    gameOver: function() {
+      this.intro = '<div class="intro-container">' +
+        '<p>Game over!</p>' +
+        '<button class="restart">Restart level</button>' +
+        '</div>';
+      this.renderIntro();
+
+      $('.restart').addEventListener('click', function(){
+        reloadLevel();
+      }.bind(this));
+    },
+    destroy: function() {
+      setTimeout(function(){
+        $('#m').appendChild($('.a'));
+        this.renderTargets = null;
+        this.dirty = null;
+        this._state = null;
+        this._turn = null;
+        this.turn = null;
+        this.currentSelection = null;
+        this.rows = null;
+        this.activeRow = null;
+        this.intro = null;
+        this.heroStartCount = null;
+      }.bind(this), 0);
     }
   };
 
@@ -221,7 +312,8 @@
   Object.defineProperty(Stage.prototype, 'players', {
     get: function() {
       return this.renderTargets.filter(function(tar){
-        return tar.type === this.P;
+        console.log(tar);
+        return tar.type === this.P && tar.alive;
       }, this);
     }
   });

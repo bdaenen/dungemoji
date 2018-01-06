@@ -3,20 +3,58 @@
   var curStage = null;
   var canvas = document.createElement('canvas');
   var ctx = canvas.getContext('2d');
+  var currentLevel = 0;
   canvas.width = canvas.height = 55;
   ctx.font = '72px "Segoe Ui Emoji"';
   ctx.fillText('⬛', -9, 53);
   //$('body').appendChild(canvas);
   $('#m').style.backgroundImage = 'url("' + canvas.toDataURL() + '")';
-  var stage1 = new Stage1();
-  curStage = stage1;
-  stage1.init();
+
+  window.loadNextLevel = function() {
+    var timeOut = false;
+    if (curStage) {
+      closeIntro();
+      timeOut = true;
+    }
+
+    if (timeOut) {
+      setTimeout(load, 500);
+    }
+    else {
+      load();
+    }
+
+    function load() {
+      curStage && curStage.destroy();
+      currentLevel++;
+      curStage = new window['Stage' + currentLevel]();
+      curStage.init();
+    }
+  };
+
+  window.reloadLevel = function(){
+    currentLevel--;
+    var tutorialEnabled = 0;
+    if (window.tutorialEnabled()) {
+      tutorialEnabled = 1;
+      window.disableTutorial();
+    }
+
+    window.loadNextLevel();
+
+    if (tutorialEnabled) {
+      window.enableTutorial();
+    }
+  };
+
+  window.loadNextLevel();
 
   var gameLoop = function() {
     if (curStage.turn === curStage.E && curStage.state !== curStage.S_AI) {
       curStage.updateAi();
     }
     if (curStage.dirty) {
+      console.log('DIRTY!');
       curStage.render();
     }
     requestAnimationFrame(gameLoop);

@@ -28,6 +28,10 @@
       this.playerTarget = this.getClosest(this.stage.P);
     }
 
+    if (!this.playerTarget) {
+      return this;
+    }
+
     log(this.view, "targets", this.playerTarget.view);
     return this;
   };
@@ -36,8 +40,9 @@
     if (!this.playerTarget || !this.playerTarget.alive) {
       this.determineTarget();
     }
-    if (this.inAttackRange(this.playerTarget)) {
+    if (this.playerTarget && this.inAttackRange(this.playerTarget)) {
       if (!this.hasAttacked) {
+        // TODO, select push when appropriate!
         this.selectAction('attack');
         this.performSelectedAction(this.playerTarget.$field);
       }
@@ -46,7 +51,7 @@
         return;
       }
     }
-    else if (!this.hasMoved) {
+    else if (!this.hasMoved && this.playerTarget) {
       var x = this.pos.x;
       var y = this.pos.y;
       var deltaX = x - this.playerTarget.pos.x;

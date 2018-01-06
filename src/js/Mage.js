@@ -8,8 +8,6 @@
     this.health = 2;
     this.str = 1.5;
     this.dex = 0;
-    this.actions[1].range = 2;
-    this.actions[1].rangeX = 2;
   };
 
   var p = Object.create(Player.prototype);

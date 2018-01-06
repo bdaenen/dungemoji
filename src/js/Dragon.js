@@ -12,6 +12,12 @@
   var p = Object.create(Enemy.prototype);
   p.constructor = Dragon;
 
+  p.push = function() {
+    this.stage.enemyPush();
+    log(this.view,'pushes onward!');
+    this.endTurn();
+  };
+
   Dragon.prototype = p;
   window.Dragon = Dragon;
 }());
