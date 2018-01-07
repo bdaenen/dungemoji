@@ -129,7 +129,7 @@ td .a {
   right: 0;
   top: 55%;
   transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.9);
   padding: 20px;
   color: green;
   font-size: 40px;
@@ -171,8 +171,12 @@ td .a {
 .view {
   pointer-events: none !important;
   opacity: 1;
+  transition: all 500ms ease-in-out;
   &.hasActed {
     opacity: 0.5;
+  }
+  &.dodge {
+    margin-left: -100px;
   }
 }
 
@@ -245,7 +249,7 @@ td .a {
   right: 0;
   top: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.9);
   z-index: -10000;
   opacity: 0;
   transition: opacity 500ms ease-in-out;
@@ -255,6 +259,9 @@ td .a {
   }
   &.hiding {
     transition: opacity 500ms ease-in-out, z-index 0ms linear 500ms;
+  }
+  h1 {
+    margin-bottom: 20px;
   }
 ;
 }
@@ -304,20 +311,20 @@ button {
 .award {
   opacity: 0;
   transform: scale(0.1);
-  &.silver {
-    filter: grayscale(100%);
-  }
-  &.bronze {
-    filter: hue-rotate(330deg) saturate(75%);
-  }
   &.active {
     opacity: 1;
     transform: scale(2);
     transition: all 1000ms;
   }
+  .silver {
+    filter: grayscale(100%);
+  }
+  .bronze {
+    filter: hue-rotate(330deg) saturate(75%);
+  }
 }
 
-.next-level {
+.next-level, .restart.finished {
   margin-top: 25px;
   opacity: 0;
   visibility: hidden;
@@ -363,6 +370,8 @@ button {
   transform: translateX(-50%) rotate(180deg);
   &.dodge {
     transform: translateX(-50%);
+    font-size: 40px;
+    margin-top: 40px;
   }
 }
 
@@ -377,7 +386,7 @@ button {
   bottom: 0;
   right: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.9);
   font-size: 24px;
   h3 {
     margin-top: 20px;

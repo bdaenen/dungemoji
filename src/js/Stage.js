@@ -25,7 +25,6 @@
     init: function(){
       var actions = document.createElement('ul');
       actions.classList.add('a');
-      console.log('adding a');
       $('#m').appendChild(actions);
       if (tutorialEnabled()) {
         this.renderIntro();
@@ -183,6 +182,10 @@
       }
       this.turn = (this.turn === this.E) ? this.P : this.E;
       this.state = this.S_CHAR;
+
+      if (this.turn === this.P && !this.playersToAct.length) {
+        this.endTurn();
+      }
     },
     playerPush: function() {
       this.activeRow--;
@@ -202,13 +205,11 @@
     endStage: function() {
       var hasMaxScore = true;
       var award = '<span>🏆</span>';
-      console.log(this.heroStartCount);
-      console.log(this.players.length);
-      if (this.heroStartCount === this.players.length - 1) {
+      if ((this.heroStartCount - 1) === this.players.length) {
         hasMaxScore = false;
         award = '<span class="silver">🏆</span>';
       }
-      else if (this.heroStartCount <= this.players.length - 2) {
+      else if ((this.heroStartCount - 2) >= this.players.length) {
         hasMaxScore = false;
         award = '<span class="bronze">🏆</span>';
       }
@@ -217,16 +218,16 @@
           '<div class="sparkles">🎇</div>' +
           '<div class="award">' + award + '</div>' +
           '<button class="next-level">Next level</button>' +
-          (hasMaxScore ? '' : '<button class="restart">Restart level</button>') +
+          (hasMaxScore ? '' : '<button class="restart finished">Restart level</button>') +
         '</div>';
+
+      this.renderIntro();
 
       if (!hasMaxScore) {
         $('.restart').addEventListener('click', function(){
           reloadLevel();
         }.bind(this));
       }
-
-      this.renderIntro();
 
       for (var i = 0; i < 5; i++) {
         setTimeout(sparkle, i * 550);
@@ -245,6 +246,7 @@
       setTimeout(function () {
         $('.award').classList.add('active');
         $('.next-level').classList.add('active');
+        $('.restart.finished') && $('.restart.finished').classList.add('active');
       }, 2000);
 
       function sparkle() {
@@ -335,7 +337,6 @@
   Object.defineProperty(Stage.prototype, 'players', {
     get: function() {
       return this.renderTargets.filter(function(tar){
-        console.log(tar);
         return tar.type === this.P && tar.alive;
       }, this);
     }

@@ -23,7 +23,8 @@
     this.addActor(create(this, 1, 5, 'Mage'));
 
     // Enemies
-    this.addActor(create(this, 1, 0, 'Dragon'));
+    this.addActor(create(this, 0, 0, 'Spider'));
+    this.addActor(create(this, 1, 2, 'Dragon'));
 
     this.turn = this.P;
     $('#log').innerText = '';

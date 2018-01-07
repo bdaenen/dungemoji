@@ -259,6 +259,12 @@
             }
             fading = true;
             effectDiv.classList.add('fade');
+            if (!target || !target.$view || !target.$view.classList.contains('dodge')) {
+              playSound('hurt');
+            }
+            else {
+              //playSound('dodge');
+            }
           }
         }.bind(this));
 
@@ -273,7 +279,7 @@
         }.bind(this), 100);
       }.bind(this), 100);
     },
-    renderDodge: function() {
+    renderDodge: function(){
       // SetTimeout to bypass stage updating clearing this. #notime.
       setTimeout(function(){
         var effectDiv = document.createElement('div');
@@ -281,6 +287,7 @@
         effectDiv.innerText = '💨';
 
         this.$field.appendChild(effectDiv);
+        this.$view.classList.add('dodge');
         var fading = false;
 
         effectDiv.addEventListener('transitionend', function(e){

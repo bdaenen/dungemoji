@@ -50,10 +50,11 @@
         return;
       }
     }
-    else if (this.actions[1].actionId === 'push') {
+    else if (!this.hasActed && this.actions[1].actionId === 'push') {
       this.selectAction('push');
       this.performSelectedAction(this.stage.fieldByCoord(this.pos.x, this.pos.y+1));
-      this.hasAttacked = true;
+      this.hasActed = true;
+      return;
       //this.selectAction('endTurn');
     }
     else if (!this.hasMoved && this.playerTarget) {

@@ -11,7 +11,7 @@
       '<p>If no enemy occupies the front row, the <span style="color:red;">Warrior</span>\'s attack is replaced by "push" (<span class="emo-inline">⬆</span>).</p>' +
       '<p>Pushing the enemy back will put them at a disadvantage, as it limits their movement.</p>' +
       '<p>Keep in mind that as soon as you push, your turn ends!</p>' +
-      '<p><b style="color: gold"><br/>Goal: Eliminate the <span style="color:blue">Spider!</span></b></p>' +
+      '<p><b style="color: gold"><br/>Objective: Eliminate the <span style="color:blue">Spider!</span></b></p>' +
       '<button onclick="closeIntro()">Continue</button>' +
       '</div>';
   };

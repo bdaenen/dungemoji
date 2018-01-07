@@ -122,7 +122,7 @@ td .a {
   right: 0;
   top: 55%;
   transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.9);
   padding: 20px;
   color: green;
   font-size: 40px;
@@ -160,9 +160,13 @@ td .a {
 .view {
   pointer-events: none !important;
   opacity: 1;
+  transition: all 500ms ease-in-out;
 }
 .view.hasActed {
   opacity: 0.5;
+}
+.view.dodge {
+  margin-left: -100px;
 }
 .noRange {
   filter: grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8);
@@ -227,7 +231,7 @@ td .a {
   right: 0;
   top: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.9);
   z-index: -10000;
   opacity: 0;
   transition: opacity 500ms ease-in-out;
@@ -238,6 +242,9 @@ td .a {
 }
 #intro.hiding {
   transition: opacity 500ms ease-in-out, z-index 0ms linear 500ms;
+}
+#intro h1 {
+  margin-bottom: 20px;
 }
 .intro-container {
   transition: all 1500ms ease-in-out 2000ms;
@@ -282,24 +289,26 @@ button.small {
   opacity: 0;
   transform: scale(0.1);
 }
-.award.silver {
-  filter: grayscale(100%);
-}
-.award.bronze {
-  filter: hue-rotate(330deg) saturate(75%);
-}
 .award.active {
   opacity: 1;
   transform: scale(2);
   transition: all 1000ms;
 }
-.next-level {
+.award .silver {
+  filter: grayscale(100%);
+}
+.award .bronze {
+  filter: hue-rotate(330deg) saturate(75%);
+}
+.next-level,
+.restart.finished {
   margin-top: 25px;
   opacity: 0;
   visibility: hidden;
   transition: all 1000ms;
 }
-.next-level.active {
+.next-level.active,
+.restart.finished.active {
   visibility: visible;
   opacity: 1;
 }
@@ -336,6 +345,8 @@ button.small {
 }
 #p .effect.dodge {
   transform: translateX(-50%);
+  font-size: 40px;
+  margin-top: 40px;
 }
 .hidden {
   display: none;
@@ -347,7 +358,7 @@ button.small {
   bottom: 0;
   right: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.9);
   font-size: 24px;
 }
 .manual-container h3 {

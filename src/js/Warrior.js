@@ -12,10 +12,6 @@
   var p = Object.create(Player.prototype);
   p.constructor = Warrior;
 
-  p.getValidActionTargets = function(action) {
-    return Mage.prototype.getValidActionTargets.call(this, action);
-  };
-
   p.push = function() {
     this.stage.playerPush();
     log(this.view,'pushes onward!');

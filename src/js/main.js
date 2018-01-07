@@ -3,7 +3,7 @@
   var curStage = null;
   var canvas = document.createElement('canvas');
   var ctx = canvas.getContext('2d');
-  var currentLevel = 3;
+  var currentLevel = 0;
   canvas.width = canvas.height = 55;
   ctx.font = '72px "Segoe Ui Emoji"';
   ctx.fillText('⬛', -9, 53);
@@ -16,8 +16,18 @@
     }
     curStage && curStage.destroy();
     currentLevel++;
+
+    if (currentLevel > 7) {
+      var tutEnabled = this.tutorialEnabled();
+      tutEnabled && this.disableTutorial();
+      currentLevel = 7;
+    }
+
     curStage = new window['Stage' + currentLevel]();
     curStage.init();
+    if (currentLevel === 7 && tutEnabled) {
+      tutEnabled && this.enableTutorial();
+    }
   };
 
   window.reloadLevel = function(){
@@ -42,7 +52,6 @@
       curStage.updateAi();
     }
     if (curStage.dirty) {
-      console.log('DIRTY!');
       curStage.render();
     }
     requestAnimationFrame(gameLoop);

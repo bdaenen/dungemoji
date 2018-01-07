@@ -16,8 +16,6 @@
   p.push = function() {
     this.stage.enemyPush();
     log(this.view,'pushes onward!');
-    this.hasActed
-    //this.endTurn();
   };
 
   Object.defineProperty(p, 'actions', {

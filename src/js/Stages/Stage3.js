@@ -11,7 +11,7 @@
       '<p>As you probably noticed, heroes and enemies are colour-coded.</p>' +
       '<p>Red-coloured enemies have the same movement and attack options <br/>as the <span style="color: red">Warrior</span>, ' +
       'green as the <span style="color: green">Rogue</span>, ' + 'and blue as the <span style="color: blue">Mage</span>.</p>' +
-      '<p><b style="color: gold"><br/>Goal: Eliminate the <span style="color:red">T-rex!</span></b></p>' +
+      '<p><b style="color: gold"><br/>Objective: Eliminate the <span style="color:red">T-rex!</span></b></p>' +
       '<button onclick="closeIntro()">Continue</button>' +
       '</div>';
   };

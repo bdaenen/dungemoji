@@ -1,19 +1,21 @@
 (function () {
   'use strict';
 
-  var Stage6 = function(){
+  var Stage5 = function(){
     Stage.call(this);
-    this.rows = 8;
+    this.rows = 6;
     this.activeRow = 3;
     this.intro = '';
   };
 
   var p = Object.create(Stage.prototype);
-  p.constructor = Stage6;
+  p.constructor = Stage5;
 
   p.init = function() {
-    this.addActor(create(this, 1, 3, 'Rogue'));
-    this.addActor(create(this, 2, 3, 'Mage'));
+    // Warrior
+    this.addActor(create(this, 1, 3, 'Warrior'));
+    this.addActor(create(this, 2, 4, 'Rogue'));
+    this.addActor(create(this, 0, 5, 'Mage'));
 
     // Enemies
     this.addActor(create(this, 1, 2, 'Dragon'));
@@ -27,7 +29,7 @@
     Stage.prototype.init.call(this);
   };
 
-  Stage6.prototype = p;
+  Stage5.prototype = p;
 
   function create(stage, x, y, cn){
     var p = new window[cn](stage);
@@ -35,5 +37,5 @@
     return p;
   }
 
-  window.Stage6 = Stage6;
+  window.Stage5 = Stage5;
 }());

@@ -52,7 +52,8 @@
             </div>
         </div>
     </div>
-    <div class="c">
+    <div class="c" style="text-align:center;">
+        <h3 style="display:inline-block;margin-top:20px;">Log</h3>
         <div id="log"></div>
     </div>
     <div class="turn">Player Turn</div>
@@ -64,7 +65,7 @@
                 <h3>How to act</h3>
                 <p>Click a character to select its action.</p>
                 <h3>Objective</h3>
-                <p>Goal: Eliminate all enemies. By clearing the front row and using the <span style="color:red">warrior</span>'s push ability you can limit their movement options.</p>
+                <p>Objective: Eliminate all enemies. By clearing the front row and using the <span style="color:red">warrior</span>'s push ability you can limit their movement options.</p>
                 <h3>Colour coding</h3>
                 <p><span class="r"></span>High HP, low attack. Can push enemy's lane. Low dodge and crit chance.</p>
                 <p><span class="g"></span>Low HP, high attack. Can attack ranged or diagonal. High dodge and crit chance.</p>
@@ -75,6 +76,7 @@
         </div>
     </div>
 </div>
+<audio class="hidden" id="audio-hurt" src="data:audio/mp3;base64,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"></audio>
 <script>
   var d=document,w=window;window.$ = d.querySelector.bind(d);
   w.$$ = d.querySelectorAll.bind(d);
@@ -114,7 +116,17 @@
   };
   w.hideManual = function() {
     $('.manual-container').classList.add('hidden');
-  }
+  };
+  w.playSound = function(soundName) {
+    var $audio = $('#audio-' + soundName);
+    if ($audio) {
+        $audio.volume = 0.5;
+        $audio.play();
+    }
+    //$audio.src = sound;
+    /*setTimeout(function(){
+    }, 0);*/
+  };
 </script>
 <script inline src="js/Player.js"></script>
 <script inline src="js/Rogue.js"></script>
@@ -129,4 +141,7 @@
 <script inline src="js/Stages/Stage2.js"></script>
 <script inline src="js/Stages/Stage3.js"></script>
 <script inline src="js/Stages/Stage4.js"></script>
+<script inline src="js/Stages/Stage5.js"></script>
+<script inline src="js/Stages/Stage6.js"></script>
+<script inline src="js/Stages/Stage7.js"></script>
 <script inline src="js/main.js"></script>
