@@ -5,8 +5,6 @@
 <div class="scanLines">
     <div id="intro" class=""></div>
     <div id="m">
-        <ul class="a">
-        </ul>
         <div class="c">
             <table id="e">
                 <tr id="e-b">
@@ -58,18 +56,22 @@
         <div id="log"></div>
     </div>
     <div class="turn">Player Turn</div>
-    <div class="i">
-        <div class="col">
-            <p>Turns are 1 character a time. Move and attack can occur in any order.</p>
-            <p>Click a character to select its action.</p>
-        </div>
-        <div class="col">
-            <p>Goal: Kill all enemies. By clearing the front row and using the warrior's push ability you can limit their movement options.</p>
-        </div>
-        <div class="col">
-            <p><span class="r"></span>High HP, low atk. Can push enemy's lane. Low dodge chance.</p>
-            <p><span class="g"></span>Low HP, high atk. Can attack ranged or diagonal. High dodge chance.</p>
-            <p><span class="b"></span>Very low HP, avg atk. Can attack all in a row, ranged. Can't dodge.</p>
+    <div style="text-align: center"><button class="hidden" id="manual" onclick="showManual()">Manual</button></div>
+    <div class="manual-container hidden">
+        <div class="c">
+                <h3>Turns</h3>
+                <p>Turns are 1 character a time. Once you have moved and attacked (in any order) with one character the turn will be passed to the opponent. If all enemy characters have already acted the turn instantly goes back to you.</p>
+                <h3>How to act</h3>
+                <p>Click a character to select its action.</p>
+                <h3>Objective</h3>
+                <p>Goal: Eliminate all enemies. By clearing the front row and using the <span style="color:red">warrior</span>'s push ability you can limit their movement options.</p>
+                <h3>Colour coding</h3>
+                <p><span class="r"></span>High HP, low attack. Can push enemy's lane. Low dodge and crit chance.</p>
+                <p><span class="g"></span>Low HP, high attack. Can attack ranged or diagonal. High dodge and crit chance.</p>
+                <p><span class="b"></span>Very low HP, average atk. Can attack any column in a row within 3 range. Can't dodge or crit.</p>
+                <h3>Scoring</h3>
+                <p>Whenever you lose a hero your score goes down by one (gold -> silver -> bronze).</p>
+            <div style="text-align: center;margin-top:40px;"><button onclick="hideManual()">Close manual</button></div>
         </div>
     </div>
 </div>
@@ -103,6 +105,15 @@
   };
   w.enableTutorial=function(){
     sessionStorage.removeItem('disableTutorial');
+  };
+  w.showManualButton = function(){
+    $('#manual').classList.remove('hidden');
+  };
+  w.showManual = function() {
+    $('.manual-container').classList.remove('hidden');
+  };
+  w.hideManual = function() {
+    $('.manual-container').classList.add('hidden');
   }
 </script>
 <script inline src="js/Player.js"></script>
@@ -116,4 +127,6 @@
 <script inline src="js/Stage.js"></script>
 <script inline src="js/Stages/Stage1.js"></script>
 <script inline src="js/Stages/Stage2.js"></script>
+<script inline src="js/Stages/Stage3.js"></script>
+<script inline src="js/Stages/Stage4.js"></script>
 <script inline src="js/main.js"></script>

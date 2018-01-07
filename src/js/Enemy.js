@@ -42,7 +42,6 @@
     }
     if (this.playerTarget && this.inAttackRange(this.playerTarget)) {
       if (!this.hasAttacked) {
-        // TODO, select push when appropriate!
         this.selectAction('attack');
         this.performSelectedAction(this.playerTarget.$field);
       }
@@ -50,6 +49,12 @@
         this.selectAction('endTurn');
         return;
       }
+    }
+    else if (this.actions[1].actionId === 'push') {
+      this.selectAction('push');
+      this.performSelectedAction(this.stage.fieldByCoord(this.pos.x, this.pos.y+1));
+      this.hasAttacked = true;
+      //this.selectAction('endTurn');
     }
     else if (!this.hasMoved && this.playerTarget) {
       var x = this.pos.x;
@@ -88,7 +93,11 @@
   p.inAttackRange = function (target) {
     var t = this;
     var s = false;
-    this.curAction = this.actions.filter(function(o){return o.actionId === 'attack'})[0];
+    var atk = this.actions.filter(function(o){return o.actionId === 'attack'})[0];
+    if (!atk) {
+      return false;
+    }
+    this.curAction = atk;
     var targets = t.getValidActionTargets(t.curAction);
     if (!targets) {return false;}
 

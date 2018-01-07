@@ -12,7 +12,7 @@
     this.rotate = 180;
     this.hueRotate = 210;
     this.saturate = 600;
-
+    this.attackView = '🕸';
   };
 
   var p = Object.create(Enemy.prototype);

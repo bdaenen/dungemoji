@@ -11,7 +11,7 @@
       '<p>If no enemy occupies the front row, the <span style="color:red;">Warrior</span>\'s attack is replaced by "push" (<span class="emo-inline">⬆</span>).</p>' +
       '<p>Pushing the enemy back will put them at a disadvantage, as it limits their movement.</p>' +
       '<p>Keep in mind that as soon as you push, your turn ends!</p>' +
-      '<p><b style="color: green"><br/>Goal: Eliminate the <span style="color:blue">Spider!</span></b></p>' +
+      '<p><b style="color: gold"><br/>Goal: Eliminate the <span style="color:blue">Spider!</span></b></p>' +
       '<button onclick="closeIntro()">Continue</button>' +
       '</div>';
   };
@@ -24,16 +24,11 @@
     this.addActor(create(this, 1, 3, 'Warrior'));
 
     // Enemies
-    this.addActor(create(this, 1, 0, 'Spider'));
-    /*var spider = create(this, 0, 0, 'Spider');
-    this.addActor(spider);
-
-    this.addActor(create(this, 1, 0, 'Dragon'));*/
+    this.addActor(create(this, 0, 0, 'Spider'));
 
     this.turn = this.P;
     $('#log').innerText = '';
     Stage.prototype.init.call(this);
-
   };
 
   Stage2.prototype = p;

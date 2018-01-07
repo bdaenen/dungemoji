@@ -6,10 +6,15 @@
     this.maxHealth = 9;
     this.health = 9;
     this.str = 1;
+    this.attackView = '🗡';
   };
 
   var p = Object.create(Player.prototype);
   p.constructor = Warrior;
+
+  p.getValidActionTargets = function(action) {
+    return Mage.prototype.getValidActionTargets.call(this, action);
+  };
 
   p.push = function() {
     this.stage.playerPush();

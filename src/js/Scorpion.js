@@ -10,6 +10,7 @@
     this.dex = 30;
     this.maxHealth = 3;
     this.health = 3;
+    this.attackView = '🥓';
   };
 
   var p = Object.create(Enemy.prototype);

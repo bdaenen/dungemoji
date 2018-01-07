@@ -24,6 +24,7 @@
     t._hasMoved = false;
     t._hasActed = false;
     t._alive = true;
+    t.attackView = '🗡';
     t._actions = [
       {
         actionId: 'move',
@@ -52,7 +53,7 @@
         return this.move(+x.dataset.x, +x.dataset.y);
       }
       var $field = this.stage.fieldByCoord(x, y);
-      if (this.stage.playerInField($field) || $field.classList.contains('wall')) {
+      if (this.stage.inited && (this.stage.playerInField($field) || $field.classList.contains('wall'))) {
         console.warn('cant move to occupied or walled field');
         return false;
       }
@@ -72,7 +73,11 @@
         return;
       }
       var target = this.stage.playerInField($field);
+      if (!target) {
+        return;
+      }
       var critmp = 1;
+      this.renderAttack(target);
       log(this.view, 'attacks', target.view);
       if (Math.random() > target.dex/100) {
         (Math.random() < this.dex/150) && (critmp = 1.5) && log('Critical hit!');
@@ -81,7 +86,7 @@
       }
       else {
         log(target.view, 'dodged!');
-        // Dodged
+        target.renderDodge();
       }
     },
     selectAction: function(actionId) {
@@ -234,6 +239,64 @@
       }, t);
 
       return b.innerHTML;
+    },
+    renderAttack: function(target) {
+      var pos = target.pos;
+      // SetTimeout to bypass stage updating clearing this. #notime.
+      setTimeout(function () {
+        var effectDiv = document.createElement('div');
+        effectDiv.classList.add('effect');
+        effectDiv.innerText = this.attackView;
+        this.$field.appendChild(effectDiv);
+        var count = 0;
+        var fading = false;
+
+        effectDiv.addEventListener('transitionend', function(e){
+          count++;
+          if (count > 1) {
+            if (fading) {
+              return effectDiv.remove();
+            }
+            fading = true;
+            effectDiv.classList.add('fade');
+          }
+        }.bind(this));
+
+        setTimeout(function(){
+          var xDelta = this.pos.x - pos.x;
+          var yDelta = this.pos.y - pos.y;
+          xDelta *= -317;
+          xDelta += (317/2);
+          yDelta *= 117;
+          effectDiv.style.left = xDelta;
+          effectDiv.style.top = -yDelta;
+        }.bind(this), 100);
+      }.bind(this), 100);
+    },
+    renderDodge: function() {
+      // SetTimeout to bypass stage updating clearing this. #notime.
+      setTimeout(function(){
+        var effectDiv = document.createElement('div');
+        effectDiv.classList.add('effect', 'dodge');
+        effectDiv.innerText = '💨';
+
+        this.$field.appendChild(effectDiv);
+        var fading = false;
+
+        effectDiv.addEventListener('transitionend', function(e){
+          if (!fading) {
+            fading = true;
+            effectDiv.classList.add('fade');
+          }
+          else {
+            effectDiv.remove();
+          }
+        }.bind(this));
+
+        setTimeout(function(){
+          effectDiv.style.left = 317/2+40;
+        }.bind(this), 100);
+      }.bind(this), 100);
     },
     kill: function(){
       var t = this;

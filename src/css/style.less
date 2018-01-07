@@ -7,6 +7,7 @@
 html {
   height: 100%;
   background: #383838;
+  font-family: sans-serif;
 }
 body {
   position: relative;
@@ -136,6 +137,18 @@ td .a {
     top: 45%;
     bottom: auto;
     color: red;
+  }
+}
+@media (max-width: 1630px) {
+  .turn {
+    right: -40px;
+    font-size: 30px;
+  }
+}
+
+@media (max-width: 1410px){
+  .turn {
+    font-size: 20px;
   }
 }
 
@@ -307,8 +320,10 @@ button {
 .next-level {
   margin-top: 25px;
   opacity: 0;
+  visibility: hidden;
   transition: all 1000ms;
   &.active {
+    visibility: visible;
     opacity: 1;
   }
 }
@@ -329,6 +344,43 @@ button {
   &.half {
     transition: transform 500ms ease-out, opacity 300ms ease-out;
     opacity: 0;
+  }
+}
+
+.effect {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  opacity: 1;
+  transform: translateX(-50%);
+  transition: all 300ms ease-in, opacity 300ms ease-in-out;
+  &.fade {
+    opacity: 0;
+  }
+}
+
+#p .effect {
+  transform: translateX(-50%) rotate(180deg);
+  &.dodge {
+    transform: translateX(-50%);
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+.manual-container {
+  position: absolute;
+  padding: 40px;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  font-size: 24px;
+  h3 {
+    margin-top: 20px;
   }
 }
 

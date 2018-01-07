@@ -3,7 +3,7 @@
   var curStage = null;
   var canvas = document.createElement('canvas');
   var ctx = canvas.getContext('2d');
-  var currentLevel = 0;
+  var currentLevel = 3;
   canvas.width = canvas.height = 55;
   ctx.font = '72px "Segoe Ui Emoji"';
   ctx.fillText('⬛', -9, 53);
@@ -11,25 +11,13 @@
   $('#m').style.backgroundImage = 'url("' + canvas.toDataURL() + '")';
 
   window.loadNextLevel = function() {
-    var timeOut = false;
     if (curStage) {
       closeIntro();
-      timeOut = true;
     }
-
-    if (timeOut) {
-      setTimeout(load, 500);
-    }
-    else {
-      load();
-    }
-
-    function load() {
-      curStage && curStage.destroy();
-      currentLevel++;
-      curStage = new window['Stage' + currentLevel]();
-      curStage.init();
-    }
+    curStage && curStage.destroy();
+    currentLevel++;
+    curStage = new window['Stage' + currentLevel]();
+    curStage.init();
   };
 
   window.reloadLevel = function(){

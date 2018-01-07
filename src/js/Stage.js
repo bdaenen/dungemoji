@@ -12,6 +12,7 @@
     this.activeRow = Math.floor(this.rows/2);
     this.intro = '';
     this.heroStartCount = 0;
+    this.inited = false;
   };
 
   Stage.prototype = {
@@ -22,10 +23,15 @@
     P: 1,
     E: 2,
     init: function(){
+      var actions = document.createElement('ul');
+      actions.classList.add('a');
+      console.log('adding a');
+      $('#m').appendChild(actions);
       if (tutorialEnabled()) {
         this.renderIntro();
       }
       this.heroStartCount = this.players.length;
+      this.inited = true;
     },
     renderIntro: function(){
       if (this.intro) {
@@ -194,34 +200,51 @@
     },
 
     endStage: function() {
+      var hasMaxScore = true;
       var award = '<span>🏆</span>';
+      console.log(this.heroStartCount);
+      console.log(this.players.length);
       if (this.heroStartCount === this.players.length - 1) {
+        hasMaxScore = false;
         award = '<span class="silver">🏆</span>';
       }
       else if (this.heroStartCount <= this.players.length - 2) {
+        hasMaxScore = false;
         award = '<span class="bronze">🏆</span>';
       }
       this.intro = '' +
         '<div class="intro-container">' +
-        '<div class="sparkles">🎇</div>' +
-        '<div class="award">' + award + '</div>' +
-        '<button class="next-level">Next level</button>' +
+          '<div class="sparkles">🎇</div>' +
+          '<div class="award">' + award + '</div>' +
+          '<button class="next-level">Next level</button>' +
+          (hasMaxScore ? '' : '<button class="restart">Restart level</button>') +
         '</div>';
+
+      if (!hasMaxScore) {
+        $('.restart').addEventListener('click', function(){
+          reloadLevel();
+        }.bind(this));
+      }
 
       this.renderIntro();
 
       for (var i = 0; i < 5; i++) {
         setTimeout(sparkle, i * 550);
-        setTimeout(function () {
-          $('.sparkles').classList.remove('active', 'half');
-        }, i * 550 + 500);
+        (function(i) {
+          setTimeout(function () {
+            var $spark = $('.sparkles');
+            $spark && $('.sparkles').classList.remove('active', 'half');
+          }, i * 550 + 500);
+          if (i === 4) {
+            $('.next-level').addEventListener('click', function (e) {
+              window.loadNextLevel();
+            }.bind(this));
+          }
+        }(i));
       }
       setTimeout(function () {
         $('.award').classList.add('active');
         $('.next-level').classList.add('active');
-        $('.next-level').addEventListener('click', function (e) {
-          window.loadNextLevel();
-        }.bind(this));
       }, 2000);
 
       function sparkle() {
@@ -248,8 +271,8 @@
       }.bind(this));
     },
     destroy: function() {
+      $('.a') && $('.a').remove();
       setTimeout(function(){
-        $('#m').appendChild($('.a'));
         this.renderTargets = null;
         this.dirty = null;
         this._state = null;

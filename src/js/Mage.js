@@ -8,6 +8,8 @@
     this.health = 2;
     this.str = 1.5;
     this.dex = 0;
+    this.attackView = '🔥';
+    this.attackView2 = '💥';
   };
 
   var p = Object.create(Player.prototype);
