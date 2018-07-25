@@ -42,19 +42,19 @@
         minifyCSS: true,
         minifyJS: true
       }))
-      .pipe(rename('index_dev.html'))
-      .pipe(gulp.dest(__dirname));
+      .pipe(rename('index.min.html'))
+      .pipe(gulp.dest(__dirname + '/build'));
   });
 
   gulp.task('gzip', ['html'], function(done){
-    var src = fs.readFileSync('./index_dev.html');
+    var src = fs.readFileSync('./build/index.min.html');
     var template = fs.readFileSync('./src/index_compressed_template.html', 'utf8');
     var data = zlib.gzipSync(src, {
       level: 9,
       windowBits: 15
     });
     data = data.toString('base64');
-    fs.writeFileSync('./index.html', template.replace('{$BUFFER}', data).replace('{$BUFFER_SIZE}', src.length));
+    fs.writeFileSync('./build/index.gzip.html', template.replace('{$BUFFER}', data).replace('{$BUFFER_SIZE}', src.length));
     return done();
   });
 

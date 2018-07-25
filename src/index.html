@@ -1,147 +1,19 @@
 <!doctype html>
 <meta charset="utf-8" />
+
 <link rel="stylesheet" type="text/css" inline href="css/style.css"/>
 
 <div class="scanLines">
-    <div id="intro" class=""></div>
-    <div id="m">
-        <div class="c">
-            <table id="e">
-                <tr id="e-b">
-                    <td id="e-b-l"></td>
-                    <td id="e-b-c"></td>
-                    <td id="e-b-r"></td>
-                </tr>
-                <tr id="e-m">
-                    <td id="e-m-l"></td>
-                    <td id="e-m-c"></td>
-                    <td id="e-m-r"></td>
-                </tr>
-                <tr id="e-f">
-                    <td id="e-f-l"></td>
-                    <td id="e-f-c"></td>
-                    <td id="e-f-r"></td>
-                </tr>
-            </table>
-            <table id="p">
-                <tr id="p-f">
-                    <td id="p-f-l"></td>
-                    <td id="p-f-c"></td>
-                    <td id="p-f-r"></td>
-                </tr>
-                <tr id="p-m">
-                    <td id="p-m-l"></td>
-                    <td id="p-m-c"></td>
-                    <td id="p-m-r"></td>
-                </tr>
-                <tr id="p-b">
-                    <td id="p-b-l"></td>
-                    <td id="p-b-c"></td>
-                    <td id="p-b-r"></td>
-                </tr>
-            </table>
-            <div id="mm">
-                <ul id="mmul">
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li class="active"></li>
-                    <li></li>
-                    <li></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="c" style="text-align:center;">
-        <h3 style="display:inline-block;margin-top:20px;">Log</h3>
-        <div id="log"></div>
-    </div>
-    <div class="turn">Player Turn</div>
-    <div style="text-align: center"><button class="hidden" id="manual" onclick="showManual()">Manual</button></div>
-    <div class="manual-container hidden">
-        <div class="c">
-                <h3>Turns</h3>
-                <p>Turns are 1 character a time. Once you have moved and attacked (in any order) with one character the turn will be passed to the opponent. If all enemy characters have already acted the turn instantly goes back to you.</p>
-                <h3>How to act</h3>
-                <p>Click a character to select its action.</p>
-                <h3>Objective</h3>
-                <p>Objective: Eliminate all enemies. By clearing the front row and using the <span style="color:red">warrior</span>'s push ability you can limit their movement options.</p>
-                <h3>Colour coding</h3>
-                <p><span class="r"></span>High HP, low attack. Can push enemy's lane. Low dodge and crit chance.</p>
-                <p><span class="g"></span>Low HP, high attack. Can attack ranged or diagonal. High dodge and crit chance.</p>
-                <p><span class="b"></span>Very low HP, average atk. Can attack any column in a row within 3 range. Can't dodge or crit.</p>
-                <h3>Scoring</h3>
-                <p>Whenever you lose a hero your score goes down by one (gold -> silver -> bronze).</p>
-            <div style="text-align: center;margin-top:40px;"><button onclick="hideManual()">Close manual</button></div>
-        </div>
-    </div>
 </div>
-<audio class="hidden" id="audio-hurt" src="data:audio/mp3;base64,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"></audio>
+
 <script>
-  var d=document,w=window;window.$ = d.querySelector.bind(d);
+  var d=document,w=window;w.$ = d.querySelector.bind(d);
   w.$$ = d.querySelectorAll.bind(d);
   w.find = function(parent, searchTerm){
     return parent.querySelectorAll(searchTerm)
   };
-  w.log = function(str){
-    var n=$('#log');
-    n.innerText+=[].join.call(arguments, ' ')+"\n";
-    n.scrollTop = n.scrollHeight;
-  };
-  w.closeIntro=function(){
-    var $i = $('#intro');
-    $i.classList.remove('active');
-    $i.classList.add('hiding');
-    setTimeout(function(){
-      $i.classList.remove('hiding');
-    }, 500);
-  };
   w.rnd=function(min, max){
     return Math.floor(Math.random()*(max-min+1)+min);
   };
-  w.disableTutorial=function(){
-    sessionStorage.setItem('disableTutorial', 1);
-  };
-  w.tutorialEnabled=function(){
-    return sessionStorage.getItem('disableTutorial', 1) ? false : true;
-  };
-  w.enableTutorial=function(){
-    sessionStorage.removeItem('disableTutorial');
-  };
-  w.showManualButton = function(){
-    $('#manual').classList.remove('hidden');
-  };
-  w.showManual = function() {
-    $('.manual-container').classList.remove('hidden');
-  };
-  w.hideManual = function() {
-    $('.manual-container').classList.add('hidden');
-  };
-  w.playSound = function(soundName) {
-    var $audio = $('#audio-' + soundName);
-    if ($audio) {
-        $audio.volume = 0.5;
-        $audio.play();
-    }
-    //$audio.src = sound;
-    /*setTimeout(function(){
-    }, 0);*/
-  };
 </script>
-<script inline src="js/Player.js"></script>
-<script inline src="js/Rogue.js"></script>
-<script inline src="js/Mage.js"></script>
-<script inline src="js/Warrior.js"></script>
-<script inline src="js/Enemy.js"></script>
-<script inline src="js/Scorpion.js"></script>
-<script inline src="js/Spider.js"></script>
-<script inline src="js/Dragon.js"></script>
-<script inline src="js/Stage.js"></script>
-<script inline src="js/Stages/Stage1.js"></script>
-<script inline src="js/Stages/Stage2.js"></script>
-<script inline src="js/Stages/Stage3.js"></script>
-<script inline src="js/Stages/Stage4.js"></script>
-<script inline src="js/Stages/Stage5.js"></script>
-<script inline src="js/Stages/Stage6.js"></script>
-<script inline src="js/Stages/Stage7.js"></script>
 <script inline src="js/main.js"></script>
