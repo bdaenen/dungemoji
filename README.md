@@ -1,5 +1,8 @@
 # dungemoji
-My entry for GWGC2017 (http://gynvael.coldwind.pl/?id=668)
+<img src="https://gynvael.coldwind.pl/img/gwgc2017_mss_top1.png"/>
+
+
+My winning entry for GWGC2017 (http://gynvael.coldwind.pl/?id=668)
 
 **Limitations**: Tactical turn-based game in <=20KB. All should be contained in a single index.html file.
 
